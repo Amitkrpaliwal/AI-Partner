@@ -284,10 +284,16 @@ fi
 echo ""
 echo "${BOLD}Step 4/4 — Starting AI Partner${RESET}"
 echo ""
-log_info "Building and starting services (first run takes 2-4 minutes)..."
+log_info "Building and starting services (first run takes 3-5 minutes)..."
 echo ""
 
 docker compose up -d --build
+
+# Pre-build the Python sandbox image so agents don't install tools at runtime.
+# Runs in background — app is already starting, this just gets the sandbox ready.
+log_info "Pre-building Python execution sandbox (background)..."
+docker compose --profile setup up sandbox-builder 2>/dev/null || \
+    docker build -t aipartner-sandbox -f docker/Dockerfile.sandbox . 2>/dev/null &
 
 echo ""
 log_info "Waiting for AI Partner to become healthy..."

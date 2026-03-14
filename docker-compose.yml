@@ -101,6 +101,19 @@ services:
     networks:
       - aipartner-net
 
+  # ── Sandbox Image Build ─────────────────────────────────
+  # Pre-builds the Python/Node execution sandbox so agents don't install
+  # tools at runtime on first use. Image is never started as a service —
+  # it's pulled by ContainerSession on demand via Docker socket.
+  sandbox-builder:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.sandbox
+    image: aipartner-sandbox
+    container_name: aipartner-sandbox-builder
+    command: echo "Sandbox image ready"
+    profiles: [setup]   # Only runs during: docker compose --profile setup up
+
   # ── Optional: Signal CLI REST API ───────────────────────
   # Uncomment to enable Signal messaging integration
   # signal:
