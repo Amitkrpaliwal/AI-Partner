@@ -1,0 +1,633 @@
+[
+    {
+        "id": "T0-HEALTH",
+        "tier": 0,
+        "name": "Platform Health Check",
+        "description": "T0 smoke test — confirm sandbox, search, and file tools work before running any benchmarks",
+        "prompt": "Complete these 3 quick health checks and save results to health-check.json:\n1. Execute Python code: print(2 + 2) — save stdout\n2. Search the web for 'today date' — save the first result snippet\n3. Write a file hello.txt containing 'AI Partner is healthy'\nSave all 3 results to health-check.json with keys: python_ok (bool), search_ok (bool), file_ok (bool), timestamp (ISO string).",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "health-check.json"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "health-check.json",
+                    "pattern": "true"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "hello.txt"
+                }
+            }
+        ],
+        "expectedPassRate": 98,
+        "timeout_minutes": 5
+    },
+    {
+        "id": "T1-B01",
+        "tier": 1,
+        "name": "Sandboxed Python Execution",
+        "description": "Generates 50 Fibonacci numbers in Docker, saves JSON + stdout",
+        "prompt": "Write a Python script that:\n1. Generates the first 50 Fibonacci numbers\n2. Calculates their sum and average\n3. Saves results to fibonacci-results.json with keys: numbers (array), sum (number), average (number)\n4. Prints exactly \"DONE\" to stdout\n\nExecute the script. Save the stdout output to fibonacci-stdout.txt.",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "fibonacci-results.json"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "fibonacci-results.json",
+                    "pattern": "\"sum\""
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "fibonacci-results.json",
+                    "pattern": "\"numbers\""
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "fibonacci-stdout.txt"
+                }
+            },
+            {
+                "type": "output_matches",
+                "config": {
+                    "command": "cat fibonacci-stdout.txt",
+                    "expected": "DONE"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "fibonacci-results.json",
+                    "criteria": "The file contains exactly 50 Fibonacci numbers in the 'numbers' array and the 'sum' value equals their correct sum (12586269025)"
+                }
+            }
+        ],
+        "expectedPassRate": 95,
+        "timeout_minutes": 8
+    },
+    {
+        "id": "T1-B02",
+        "tier": 1,
+        "name": "TypeScript Compile Validation",
+        "description": "Write a TS file with correct types, compile with tsc, validate output JS exists",
+        "prompt": "Create a TypeScript file at greeting.ts that:\n- Exports a function greet(name: string): string\n- Returns the string: Hello, {name}! Welcome to AI Partner.\n- Has proper TypeScript type annotations\n\nCompile it with: npx tsc greeting.ts --target ES2020 --module commonjs\nSave any compilation output (stdout+stderr) to compile-log.txt.",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "greeting.ts"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "compile-log.txt"
+                }
+            },
+            {
+                "type": "code_compiles",
+                "config": {
+                    "command": "npx tsc greeting.ts --target ES2020 --module commonjs --noEmit"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "greeting.ts",
+                    "criteria": "The file exports a function named 'greet' that accepts a 'name' parameter of type string and returns a string type. The function returns a greeting string containing the name."
+                }
+            }
+        ],
+        "expectedPassRate": 90,
+        "timeout_minutes": 6
+    },
+    {
+        "id": "T1-B03",
+        "tier": 1,
+        "name": "Wikipedia Extract + Structured Report",
+        "description": "Navigate Wikipedia AI article, extract content, screenshot, create structured report",
+        "prompt": "Go to https://en.wikipedia.org/wiki/Artificial_intelligence\n\nExtract:\n- The full introduction section text\n- The list of AI subfields from the table of contents\n- The first paragraph of the History section\n\nSave raw extraction to wiki-ai-raw.txt.\n\nCreate report.md with:\n- 5 key facts about AI (numbered list)\n- 3 major subfields with one-line description each\n- A 100-word summary of AI history\n\nTake a full-page screenshot and save as wiki-ai.png.",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "wiki-ai-raw.txt"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "report.md"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "report.md",
+                    "pattern": "subfield|machine learning|neural|deep learning"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "wiki-ai.png"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "report.md",
+                    "criteria": "The file has at least 5 numbered facts about AI, mentions at least 3 subfields with descriptions, and contains a history summary paragraph of approximately 100 words. Content is factually consistent with Wikipedia."
+                }
+            }
+        ],
+        "expectedPassRate": 85,
+        "timeout_minutes": 10
+    },
+    {
+        "id": "T1-B04",
+        "tier": 1,
+        "name": "GitHub Trending Scrape",
+        "description": "Navigate GitHub trending, extract top 10 repos, screenshot, create summary",
+        "prompt": "Go to https://github.com/trending?since=daily&spoken_language_code=en\n\nExtract the top 10 trending repositories. For each repo get:\n- Repository name in owner/name format\n- Stars gained today (number only)\n- Total stars count\n- Primary programming language\n- Description\n- Full URL\n\nSave all data to trending.json as an array of objects with keys: name, stars_today, total_stars, language, description, url.\n\nTake a screenshot and save as github-trending.png.\n\nCreate trending-summary.md with a one-line highlight per repository.",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "trending.json"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "trending.json",
+                    "pattern": "\"stars_today\""
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "trending.json",
+                    "pattern": "\"name\""
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "github-trending.png"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "trending-summary.md"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "trending.json",
+                    "criteria": "The file contains at least 8 repository entries (ideally 10). Each entry has a non-empty name in owner/name format (contains a slash), and stars_today is a non-negative number."
+                }
+            }
+        ],
+        "expectedPassRate": 90,
+        "timeout_minutes": 10
+    },
+    {
+        "id": "T1-B05",
+        "tier": 1,
+        "name": "HN Front Page Newsletter",
+        "description": "Scrape HN, extract 15 stories, create a formatted newsletter with editor's pick",
+        "prompt": "Go to https://news.ycombinator.com\n\nExtract the top 15 stories: rank, title, URL, points, comment count.\nSave to hn-data.json as an array with keys: rank, title, url, points, comments.\n\nCreate daily-brief.md formatted as a newsletter:\n- Header with today's date (2026-03-06)\n- Each story as a numbered item with title, points, and one sentence about why it matters\n- A final \"Editor's Pick\" section with your top story and a 3-sentence justification\n\nTake a screenshot and save as hn-front.png.",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "hn-data.json"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "hn-data.json",
+                    "pattern": "\"points\""
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "daily-brief.md"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "daily-brief.md",
+                    "pattern": "Editor's Pick|Editor's Pick"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "hn-front.png"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "daily-brief.md",
+                    "criteria": "The file reads like a newsletter: has a date header, at least 10 numbered stories each with a commentary sentence, and a final Editor's Pick section with a named story and multi-sentence justification."
+                }
+            }
+        ],
+        "expectedPassRate": 88,
+        "timeout_minutes": 10
+    },
+    {
+        "id": "T2-B08",
+        "tier": 2,
+        "name": "Dynamic Tool Creation + Use",
+        "description": "Create a fetch_weather tool, register it, use it for 3 cities",
+        "prompt": "Create a reusable Python script tool called fetch_weather.py that:\n- Accepts a city name as a command-line argument\n- Fetches weather from https://wttr.in/{city}?format=j1 (free JSON API, no auth needed)\n- Prints a JSON object with: city, temperature_C, condition, humidity\n- Handles errors gracefully\n\nSave the script to fetch_weather.py.\n\nThen run it for 3 cities using run_command:\n1. python3 fetch_weather.py Delhi\n2. python3 fetch_weather.py London\n3. python3 fetch_weather.py \"New York\"\n\nSave all 3 outputs combined into weather-report.json as an array.\nCreate weather-summary.md comparing the 3 cities with a simple table.",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "fetch_weather.py"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "weather-report.json"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "weather-report.json",
+                    "pattern": "temperature"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "weather-summary.md"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "weather-report.json",
+                    "criteria": "The file contains weather data for at least 2 of the 3 cities (Delhi, London, New York). Each entry has a temperature value and a condition/description field."
+                }
+            }
+        ],
+        "expectedPassRate": 80,
+        "timeout_minutes": 10
+    },
+    {
+        "id": "T2-B09",
+        "tier": 2,
+        "name": "Multi-Agent Delegation",
+        "description": "Orchestrator delegates Express API to coder agent, writes docs in parallel",
+        "prompt": "Complete this task using parallel agent delegation:\n\nDelegate to a coder agent:\n\"Create a REST API in Express.js at server.js with these endpoints:\n- GET /api/health → returns {status: 'ok', timestamp: Date.now()}\n- GET /api/agents → returns [{name: 'ReActAgent'}, {name: 'CoderAgent'}, {name: 'ResearchAgent'}]\n- POST /api/task → accepts {task: string}, returns {id: '<uuid>', status: 'queued', task: task}\nInstall dependencies with npm install express.\"\n\nWhile the coder agent works, you create api-docs.md with:\n- Title: AI Partner API Documentation\n- Section for each endpoint: method, URL, request body (if any), response format, example curl command\n\nAfter both complete: run node server.js in the background for 5 seconds, then test with:\n- curl http://localhost:3000/api/health\nSave the curl response to health-response.json.",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "server.js"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "api-docs.md"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "health-response.json"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "health-response.json",
+                    "pattern": "\"status\""
+                }
+            },
+            {
+                "type": "code_compiles",
+                "config": {
+                    "command": "node --check server.js"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "api-docs.md",
+                    "criteria": "The documentation covers all 3 endpoints (/api/health, /api/agents, /api/task) with HTTP method, URL, and at least one curl example each."
+                }
+            }
+        ],
+        "expectedPassRate": 75,
+        "timeout_minutes": 12
+    },
+    {
+        "id": "T2-B10",
+        "tier": 2,
+        "name": "SQLite Schema + Small Model",
+        "description": "Create SaaS DB schema, execute with sqlite3, verify all 3 tables exist",
+        "prompt": "Create a complete SQLite database schema for a SaaS application.\n\nSave the following SQL to schema.sql:\n```sql\nCREATE TABLE IF NOT EXISTS users (\n    id TEXT PRIMARY KEY,\n    email TEXT UNIQUE NOT NULL,\n    password_hash TEXT NOT NULL,\n    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,\n    role TEXT DEFAULT 'user'\n);\n\nCREATE TABLE IF NOT EXISTS subscriptions (\n    id TEXT PRIMARY KEY,\n    user_id TEXT NOT NULL REFERENCES users(id),\n    plan TEXT NOT NULL,\n    status TEXT DEFAULT 'active',\n    expires_at DATETIME\n);\n\nCREATE TABLE IF NOT EXISTS audit_logs (\n    id INTEGER PRIMARY KEY AUTOINCREMENT,\n    user_id TEXT,\n    action TEXT NOT NULL,\n    metadata TEXT,\n    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP\n);\n```\n\nExecute: sqlite3 saas.db < schema.sql\nVerify tables: sqlite3 saas.db \".tables\" and save output to tables-verification.txt.",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "schema.sql"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "saas.db"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "tables-verification.txt"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "tables-verification.txt",
+                    "pattern": "users"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "tables-verification.txt",
+                    "pattern": "subscriptions"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "tables-verification.txt",
+                    "pattern": "audit_logs"
+                }
+            }
+        ],
+        "expectedPassRate": 90,
+        "timeout_minutes": 8
+    },
+    {
+        "id": "T2-B15",
+        "tier": 2,
+        "name": "Telegram Notification Pipeline",
+        "description": "3 sequential tasks with Telegram notification after each",
+        "prompt": "Complete 3 tasks in sequence and send a Telegram notification after each:\n\nTask 1: Fetch https://news.ycombinator.com, extract the top story title and URL. Send Telegram message: \"✅ Task 1 done — Top HN story: {title} — {url}\"\n\nTask 2: Write a Python script reverse.py that reverses a string passed as command-line argument. Run it with input 'AgentForge'. Send Telegram message: \"✅ Task 2 done — reversed = {output}\"\n\nTask 3: Create summary.md that combines both results: the HN story and the reverse output. Send Telegram: \"✅ All 3 tasks complete — summary.md is ready.\"\n\nSave all results to pipeline-results.json with keys: task1 (title+url), task2 (reversed_string), task3 (status).",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "pipeline-results.json"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "summary.md"
+                }
+            },
+            {
+                "type": "output_matches",
+                "config": {
+                    "command": "python3 reverse.py AgentForge",
+                    "expected": "egroftnega"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "pipeline-results.json",
+                    "criteria": "The file has a task1 entry with a non-empty title and url, a task2 entry with a reversed string, and a task3 entry indicating completion."
+                }
+            }
+        ],
+        "expectedPassRate": 82,
+        "timeout_minutes": 15,
+        "requires": [
+            "telegram"
+        ]
+    },
+    {
+        "id": "T3-B12",
+        "tier": 3,
+        "name": "Document Generation Suite",
+        "description": "Generate PDF, XLSX, and PPTX from GitHub trending data in one goal",
+        "prompt": "Fetch fresh data from https://github.com/trending (navigate with browser).\n\nExtract top 10 repos: rank, name (owner/name), language, stars today, total stars, description.\n\nGenerate 3 documents and save them to a trending-docs/ folder:\n\n1. trending-report.html — A professional HTML report with:\n   - Title: \"GitHub Trending Report — 2026-03-06\"\n   - Summary paragraph about trending languages\n   - Formatted table of top 10 repos\n\n2. trending-data.xlsx — Excel file with columns: Rank, Repo Name, Language, Stars Today, Total Stars, Description\n\n3. trending-slides.pptx — 5-slide PowerPoint:\n   - Slide 1: Title 'GitHub Trending Report 2026-03-06'\n   - Slides 2-4: Top 3 repos with name, description, star count\n   - Slide 5: 'Key Insights' with 3 bullet points about trending tech",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "trending-docs/trending-report.html"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "trending-docs/trending-data.xlsx"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "trending-docs/trending-slides.pptx"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "trending-docs/trending-report.html",
+                    "criteria": "The file is valid HTML containing a table of GitHub repos with at least 5 rows, each with a repo name, language, and star count."
+                }
+            }
+        ],
+        "expectedPassRate": 78,
+        "timeout_minutes": 15
+    },
+    {
+        "id": "T3-B14",
+        "tier": 3,
+        "name": "Stuck Loop Recovery",
+        "description": "Agent hits fake API, auto-recovers by finding real alternative",
+        "prompt": "Attempt to fetch stock price data:\n\n1. Try fetching: https://api.fakebroker-xyz-notreal.com/v1/stocks/AAPL\n2. If that fails (it will), try up to 2 more times with 2-second delays\n3. After all retries fail, search the web for a free stock price API that requires no authentication\n4. Use that alternative API to get the current AAPL stock price\n5. Save to stock-price.json with keys: symbol ('AAPL'), price (number), source_api (URL), timestamp (ISO)\n6. Screenshot any financial page you visit as stock-page.png\n\nNote: Do NOT exceed 3 retry attempts on the fake URL. Move on quickly.",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "stock-price.json"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "stock-price.json",
+                    "pattern": "AAPL"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "stock-price.json",
+                    "pattern": "price"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "stock-price.json",
+                    "criteria": "The file has an AAPL price that is a reasonable stock price number (between 50 and 1000), a source_api field with a real URL, and a timestamp."
+                }
+            }
+        ],
+        "expectedPassRate": 72,
+        "timeout_minutes": 12
+    },
+    {
+        "id": "T4-B16",
+        "tier": 4,
+        "name": "Full Autonomous Daily Brief",
+        "description": "Hero demo: 3 sites, 5 files, full browser + synthesis pipeline",
+        "prompt": "You are my autonomous research assistant. Complete ALL steps without stopping:\n\nSTEP 1 — GitHub (https://github.com/trending?since=daily)\nExtract top 5 AI/ML repos: name, stars today, description, URL.\n\nSTEP 2 — Hacker News (https://news.ycombinator.com)\nExtract top 5 stories: title, points, comment count, URL.\n\nSTEP 3 — arXiv (https://arxiv.org/list/cs.AI/recent)\nExtract latest 3 papers: title, authors list, abstract page URL.\n\nSTEP 4 — Create:\n- daily-brief.json with structure: { repos: [...], news: [...], papers: [...], generated_at: '<ISO timestamp 2026-03-06T...' }\n- daily-brief.md formatted newsletter:\n  Header: \"🤖 AI Partner Daily Brief — March 6, 2026\"\n  📦 GitHub Trending section (5 repos)\n  📰 Hacker News section (5 stories)\n  📄 arXiv section (3 papers)\n  ⭐ Editor's Pick section with 1 story from any source and 3-sentence justification\n\nSTEP 5 — Screenshot each site:\n- github.png (GitHub trending page)\n- hn.png (HN front page)\n- arxiv.png (arXiv cs.AI listing)",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "daily-brief.json"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "daily-brief.md"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "github.png"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "hn.png"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "arxiv.png"
+                }
+            },
+            {
+                "type": "file_contains",
+                "config": {
+                    "path": "daily-brief.md",
+                    "pattern": "Editor's Pick|Editor's Pick"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "daily-brief.json",
+                    "criteria": "The file has a 'repos' array with at least 3 entries, a 'news' array with at least 3 entries, and a 'papers' array with at least 2 entries. All entries have non-empty titles/names."
+                }
+            }
+        ],
+        "expectedPassRate": 78,
+        "timeout_minutes": 20
+    },
+    {
+        "id": "T4-B17",
+        "tier": 4,
+        "name": "Full Stack App Generation",
+        "description": "Build complete Node.js REST API with tests that actually pass",
+        "prompt": "Build a complete working Node.js REST API:\n\n1. Create package.json with:\n   - name: ai-partner-api\n   - dependencies: express, uuid\n   - devDependencies: jest, supertest\n   - scripts: test: jest --testTimeout=10000\n\n2. Create server.js with Express:\n   - GET /api/health → { status: 'ok', timestamp: Date.now() }\n   - GET /api/agents → [{ name: 'ReActAgent', role: 'reasoner' }, { name: 'CoderAgent', role: 'executor' }, { name: 'ResearchAgent', role: 'researcher' }]\n   - POST /api/task → accepts { task: string }, returns { id: '<uuid v4>', status: 'queued', task: <echoed back> }\n   - Export the app (module.exports = app) for testing\n\n3. Create tests/api.test.js with jest + supertest tests for all 3 endpoints\n\n4. Create README.md with curl examples for all 3 endpoints\n\nRun: npm install && npm test\nSave test output to test-output.txt.",
+        "criteria": [
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "server.js"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "package.json"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "README.md"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "tests/api.test.js"
+                }
+            },
+            {
+                "type": "file_exists",
+                "config": {
+                    "path": "test-output.txt"
+                }
+            },
+            {
+                "type": "code_compiles",
+                "config": {
+                    "command": "node --check server.js"
+                }
+            },
+            {
+                "type": "tests_pass",
+                "config": {
+                    "command": "npm test"
+                }
+            },
+            {
+                "type": "llm_evaluates",
+                "config": {
+                    "path": "README.md",
+                    "criteria": "The README has curl command examples for at least 2 of the 3 endpoints (/api/health, /api/agents, /api/task)."
+                }
+            }
+        ],
+        "expectedPassRate": 72,
+        "timeout_minutes": 20
+    }
+]

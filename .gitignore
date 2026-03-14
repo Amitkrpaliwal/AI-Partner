@@ -1,0 +1,41 @@
+# ── Dependencies ──────────────────────────────────────
+node_modules/
+
+# ── Build outputs ─────────────────────────────────────
+dist/
+dist-server/
+*.js.map
+
+# ── Environment & secrets ─────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ── Database (runtime data — not for repo) ────────────
+*.db
+*.db-shm
+*.db-wal
+coworker.db
+
+# ── Logs & test artifacts ─────────────────────────────
+*.log
+test*.txt
+test-results/
+playwright-report/
+vitest-log.txt
+build_log*.txt
+audit_result.md
+extract_result.js
+
+# ── OS / editor ───────────────────────────────────────
+.DS_Store
+Thumbs.db
+.claude/
+*.swp
+*.swo
+
+# ── Docker runtime ────────────────────────────────────
+# (docker-compose.yml is committed — volumes are runtime)
+
+# ── Coverage ──────────────────────────────────────────
+coverage/

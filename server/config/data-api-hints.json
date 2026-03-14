@@ -1,0 +1,22 @@
+{
+  "nse": "Yahoo Finance via yfinance: NSE stocks use .NS suffix (e.g., RELIANCE.NS). BSE stocks use .BO suffix.",
+  "bse": "Yahoo Finance via yfinance: BSE stocks use .BO suffix (e.g., RELIANCE.BO). NSE stocks use .NS suffix.",
+  "stock": "Yahoo Finance via yfinance: use yf.Ticker('SYMBOL').history() for price history, .info for fundamentals",
+  "weather": "wttr.in: https://wttr.in/CITY?format=j1",
+  "crypto": "CoinGecko: https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd",
+  "currency": "ExchangeRate: https://api.exchangerate-api.com/v4/latest/USD",
+  "news": "Use web_search tool (SearXNG) — already available, no CAPTCHA",
+  "price": "Use web_search tool to find prices from multiple sources",
+  "excel": "Use pandas: df.to_excel('/workspace/output/file.xlsx', index=False) — openpyxl is pre-installed",
+  "fundamental": "yfinance Ticker.info keys: trailingPE, forwardPE, priceToBook, debtToEquity, returnOnEquity, earningsGrowth, marketCap, dividendYield",
+  "npmtrends": "npmtrends.com is a JavaScript SPA — web_fetch returns empty HTML. Use npm registry API instead: https://api.npmjs.org/downloads/point/last-week/PACKAGE_NAME or https://api.npmjs.org/downloads/range/2024-01-01:2024-12-31/react (replace dates)",
+  "npm downloads": "Use npm registry API: https://api.npmjs.org/downloads/point/last-week/PACKAGE_NAME — no CAPTCHA, returns JSON with downloadCount",
+  "javascript framework": "For JS framework comparison use npm API: https://api.npmjs.org/downloads/point/last-week/react then /vue then /svelte — JSON with download counts",
+  "bundlephobia": "bundlephobia.com is a SPA. Use bundlephobia API instead: https://bundlephobia.com/api/size?package=PACKAGE_NAME",
+  "reddit": "Reddit blocks headless browsers. Use the JSON API instead: https://www.reddit.com/r/SUBREDDIT/top.json?t=week&limit=10 (no auth needed). For post details: https://www.reddit.com/r/SUBREDDIT/comments/POST_ID.json",
+  "reddit.com": "Reddit blocks headless browsers. Use JSON API: https://www.reddit.com/r/SUBREDDIT/top.json?t=week&limit=10 — returns posts array with title, score, url, selftext, num_comments",
+  "hacker news": "Hacker News API: https://hacker-news.firebaseio.com/v0/topstories.json (returns list of IDs), then https://hacker-news.firebaseio.com/v0/item/ID.json for each item",
+  "hackernews": "Hacker News API: https://hacker-news.firebaseio.com/v0/topstories.json then item/ID.json — no browser needed",
+  "github trending": "GitHub does not have a public trending API. Primary: web_search for 'github trending LANGUAGE this week'. Fallback when search is down: use GitHub Search API — run_command with curl: curl -s 'https://api.github.com/search/repositories?q=stars:>100+language:LANGUAGE+pushed:>2024-01-01&sort=stars&order=desc&per_page=10' -H 'Accept: application/vnd.github.v3+json' | python3 -c \"import json,sys; r=json.load(sys.stdin); [print(f\\\"#{i+1} {x['full_name']} ⭐{x['stargazers_count']} - {x['description']}\\\") for i,x in enumerate(r['items'])]\"",
+  "github": "GitHub REST API base: https://api.github.com — no auth needed for public repos (60 req/hr). Repos: /repos/OWNER/REPO, Search: /search/repositories?q=QUERY&sort=stars, Releases: /repos/OWNER/REPO/releases/latest"
+}

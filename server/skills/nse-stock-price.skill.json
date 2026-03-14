@@ -1,0 +1,13 @@
+{
+  "name": "nse_stock_price",
+  "description": "Fetch NSE (India) stock price using Yahoo Finance API — no CAPTCHA, no scraping",
+  "pattern": "nse, stock, price, india, share, equity, bse, sensex, nifty",
+  "runtime": "node",
+  "tags": ["finance", "api", "india", "stock"],
+  "parameters": [
+    { "name": "SYMBOL", "type": "string", "description": "NSE ticker symbol (e.g. TCS, INFY, RELIANCE)", "required": true },
+    { "name": "WORKSPACE", "type": "path", "description": "Output directory", "required": true },
+    { "name": "OUTPUT_FILE", "type": "string", "description": "Output filename", "required": false, "default": "stock_price.json" }
+  ],
+  "template": "const https = require('https');\nconst fs = require('fs');\nconst path = require('path');\n\nconst symbol = '{{SYMBOL}}.NS';\nconst url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?interval=1d&range=1d`;\n\nhttps.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {\n  let data = '';\n  res.on('data', chunk => data += chunk);\n  res.on('end', () => {\n    try {\n      const json = JSON.parse(data);\n      const meta = json.chart.result[0].meta;\n      const result = {\n        symbol: meta.symbol,\n        price: meta.regularMarketPrice,\n        currency: meta.currency,\n        exchange: meta.exchangeName,\n        timestamp: new Date().toISOString()\n      };\n      const outPath = path.join('{{WORKSPACE}}', '{{OUTPUT_FILE}}');\n      fs.writeFileSync(outPath, JSON.stringify(result, null, 2));\n      console.log('Stock price fetched:', result.symbol, result.price, result.currency);\n      console.log('CREATED:', outPath);\n    } catch (e) {\n      console.error('Parse error:', e.message, data.substring(0, 200));\n      process.exit(1);\n    }\n  });\n}).on('error', e => { console.error(e.message); process.exit(1); });\n"
+}

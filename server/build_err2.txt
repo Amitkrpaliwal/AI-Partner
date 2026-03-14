@@ -1,0 +1,76 @@
+﻿src/agents/goal/ExecutionEngine.ts(260,69): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "[ExecutionEngine] Script execution failed:", msg?: never): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(obj: "[ExecutionEngine] Script execution failed:", msg?: never, ...args: unknown[]): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+src/agents/goal/ExecutionEngine.ts(460,87): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "[ExecutionEngine] Skill learning failed:", msg?: never): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(obj: "[ExecutionEngine] Skill learning failed:", msg?: never, ...args: unknown[]): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+src/agents/goal/ReActReasoner.ts(276,60): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "[ReActReasoner] Reasoning failed:", msg?: never): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(obj: "[ReActReasoner] Reasoning failed:", msg?: never, ...args: unknown[]): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+src/agents/goal/ReActReasoner.ts(825,70): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "[ReActReasoner] reasonAndDecide failed:", msg?: never): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(obj: "[ReActReasoner] reasonAndDecide failed:", msg?: never, ...args: unknown[]): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+src/agents/goal/ReActReasoner.ts(1249,61): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "[ReActReasoner] Assessment failed:", msg?: never): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(obj: "[ReActReasoner] Assessment failed:", msg?: never, ...args: unknown[]): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+src/agents/goal/ReActReasoner.ts(1273,47): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: string, msg?: never): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(obj: string, msg?: never, ...args: unknown[]): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+src/agents/goal/ReActReasoner.ts(1545,21): error TS2353: Object literal may only specify known properties, and 'artifacts' does not exist in type 'ActionResult'.
+src/agents/goal/ReActReasoner.ts(1749,41): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "Action failed:", msg?: never): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(obj: "Action failed:", msg?: never, ...args: unknown[]): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+src/agents/goal/ReActReasoner.ts(1840,73): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "[ReActReasoner] Force-write generation failed:", msg?: never): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(obj: "[ReActReasoner] Force-write generation failed:", msg?: never, ...args: unknown[]): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+src/agents/goal/ReActReasoner.ts(1952,70): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "[ReActReasoner] Tool-need detection failed:", msg?: never): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(obj: "[ReActReasoner] Tool-need detection failed:", msg?: never, ...args: unknown[]): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+src/agents/GoalOrientedExecutor.ts(1357,62): error TS2345: Argument of type '{ iteration: number; error: string; context: string; recovery_attempted: true; recovery_successful: false; }' is not assignable to parameter of type 'ErrorRecord'.
+  Property 'timestamp' is missing in type '{ iteration: number; error: string; context: string; recovery_attempted: true; recovery_successful: false; }' but required in type 'ErrorRecord'.
+src/execution/ContainerSession.ts(226,73): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "[ContainerSession] Failed to create container:", msg?: never): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+  Overload 2 of 3, '(obj: "[ContainerSession] Failed to create container:", msg?: never, ...args: unknown[]): void', gave the following error.
+    Argument of type 'any' is not assignable to parameter of type 'never'.
+src/index.ts(864,37): error TS2339: Property 'stopAll' does not exist on type 'ContainerSessionManager'.
+src/mcp/MCPManager.ts(1029,70): error TS2339: Property 'default' does not exist on type 'typeof import("D:/AI/Test/AI Partner G/AI Partner/node_modules/pdf-parse/dist/pdf-parse/esm/index")'.
+src/routes/secretRoutes.ts(129,29): error TS2345: Argument of type '"secrets_bulk_deleted"' is not assignable to parameter of type '"login" | "logout" | "login_failed" | "register" | "apikey_created" | "apikey_used" | "secret_created" | "secret_updated" | "secret_deleted"'.
+src/routes/workspaceRoutes.ts(325,33): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Argument of type 'RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>' is not assignable to parameter of type 'RequestHandlerParams<ParamsDictionary, any, any, ParsedQs, Record<string, any>>'.
+      Type 'import("D:/AI/Test/AI Partner G/AI Partner/node_modules/@types/express/index").RequestHandler<import("D:/AI/Test/AI Partner G/AI Partner/node_modules/@types/express-serve-static-core/index").ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>' is not assignable to type 'import("D:/AI/Test/AI Partner G/AI Partner/server/node_modules/@types/express-serve-static-core/index").RequestHandler<import("D:/AI/Test/AI Partner G/AI Partner/node_modules/@types/express-serve-static-core/index").ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>'.
+        Types of parameters 'req' and 'req' are incompatible.
+          Type 'import("D:/AI/Test/AI Partner G/AI Partner/server/node_modules/@types/express-serve-static-core/index").Request<import("D:/AI/Test/AI Partner G/AI Partner/node_modules/@types/express-serve-static-core/index").ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>' is not assignable to type 'import("D:/AI/Test/AI Partner G/AI Partner/node_modules/@types/express-serve-static-core/index").Request<import("D:/AI/Test/AI Partner G/AI Partner/node_modules/@types/express-serve-static-core/index").ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>'.
+            The types of 'app.router' are incompatible between these types.
+              Type 'string' is not assignable to type 'Router'.
+src/services/AgentOrchestrator.ts(1171,34): error TS2552: Cannot find name 'log'. Did you mean 'Long'?
+src/services/AgentOrchestrator.ts(1402,40): error TS2550: Property 'findLastIndex' does not exist on type 'string[]'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2023' or later.
+src/services/AgentOrchestrator.ts(1412,40): error TS2550: Property 'findLastIndex' does not exist on type 'string[]'. Do you need to change your target library? Try changing the 'lib' compiler option to 'es2023' or later.
+src/services/AgentOrchestrator.ts(1442,21): error TS2552: Cannot find name 'log'. Did you mean 'Long'?
+src/services/AgentOrchestrator.ts(1909,72): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+src/services/AgentOrchestrator.ts(1926,21): error TS2322: Type '"preference"' is not assignable to type '"action" | "decision" | "learning" | "conversation" | "heartbeat" | "task_execution"'.
+src/services/AgentOrchestrator.ts(2007,54): error TS2339: Property 'generated_files' does not exist on type 'GoalExecutionResult'.
+src/services/AgentOrchestrator.ts(2009,48): error TS2339: Property 'outcome_summary' does not exist on type 'GoalExecutionResult'.
+src/services/AgentOrchestrator.ts(2044,47): error TS2558: Expected 0 type arguments, but got 1.
+src/services/AgentOrchestrator.ts(2069,67): error TS2307: Cannot find module './KnowledgeBaseService' or its corresponding type declarations.
+src/tests/unit/goalValidator.test.ts(16,5): error TS2353: Object literal may only specify known properties, and 'description' does not exist in type 'SuccessCriterion'.
+src/tests/unit/migrationRunner.test.ts(51,13): error TS2339: Property 'run' does not exist on type 'typeof import("D:/AI/Test/AI Partner G/AI Partner/server/src/database/MigrationRunner")'.

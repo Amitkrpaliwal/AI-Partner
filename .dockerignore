@@ -1,0 +1,12 @@
+node_modules/
+dist/
+dist-server/
+*.db
+.git/
+.gitignore
+.env
+*.log
+server/src/tests/
+.github/
+coworker.db
+docker_plan.md

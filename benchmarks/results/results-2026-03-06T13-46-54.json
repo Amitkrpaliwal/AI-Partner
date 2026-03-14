@@ -1,0 +1,34 @@
+[
+  {
+    "id": "T0-HEALTH",
+    "name": "Platform Health Check",
+    "tier": 0,
+    "startedAt": "2026-03-06T13:46:54.279Z",
+    "status": "FAIL",
+    "passed": false,
+    "duration_s": 241,
+    "execId": "goal_1772804814287_32837bae",
+    "goalStatus": "failed",
+    "criteria": [
+      {
+        "type": "file_exists",
+        "passed": true,
+        "message": "File exists: health-check.json (112 bytes)"
+      },
+      {
+        "type": "file_contains",
+        "passed": false,
+        "message": "Pattern \"true\" NOT found in health-check.json. File exists (112 chars). Content preview: \"{\\n  \"python_ok\": false,\\n  \"search_ok\": false,\\n  \"file_ok\": false,\\n  \"timestamp\": \"2026-03-06T13:50:09.820486Z\"\\n}\""
+      },
+      {
+        "type": "file_exists",
+        "passed": false,
+        "message": "File NOT found at: /workspace/hello.txt — agent must write this file"
+      }
+    ],
+    "notes": [
+      "Criteria: 1/3 passed"
+    ],
+    "completedAt": "2026-03-06T13:50:55.000Z"
+  }
+]

@@ -1,0 +1,36 @@
+# ══════════════════════════════════════════════════════════
+# AI Partner — Development Override
+# ══════════════════════════════════════════════════════════
+# Enables live code reload without docker compose --build.
+# Source files are volume-mounted from the host, overriding
+# the baked-in copies in the image.
+#
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#   (or: npm run dev:docker from server/)
+#
+# First time (or after package.json changes):
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+# ══════════════════════════════════════════════════════════
+
+services:
+  app:
+    volumes:
+      # Override baked source with live host directories
+      - ./server/src:/app/server/src
+      - ./server/config:/app/server/config
+      - ./server/prompts:/app/server/prompts
+      - ./server/skills:/app/server/skills
+      - ./client/src:/app/client/src
+    environment:
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+    # Switch from the production entrypoint to tsx --watch for auto-restart
+    entrypoint: ["node", "--import", "tsx/esm", "--watch", "--watch-path=/app/server/src"]
+    command: ["/app/server/src/index.ts"]
+    ports:
+      - "9229:9229"   # Node.js inspector (attach VS Code debugger)
+    deploy:
+      resources:
+        limits:
+          memory: 3G  # Extra headroom for tsx watch + debug overhead

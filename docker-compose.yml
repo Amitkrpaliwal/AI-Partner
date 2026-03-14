@@ -1,0 +1,125 @@
+# ══════════════════════════════════════════════════════════
+# AI Partner — Docker Compose
+# ══════════════════════════════════════════════════════════
+# Quick start:
+#   cp .env.example .env        # Configure API keys
+#   docker compose up -d        # Start all services
+#   open http://localhost:3000   # Open the UI
+#
+# Teardown:
+#   docker compose down         # Stop services (keeps data)
+#   docker compose down -v      # Stop + delete all data
+# ══════════════════════════════════════════════════════════
+
+services:
+  # ── AI Partner Application ──────────────────────────────
+  app:
+    build: .
+    container_name: aipartner
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock   # Sandbox container creation
+      - aipartner-data:/data                         # SQLite DB, config, credentials
+      - ${HOST_WORKSPACE:-aipartner-workspace}:/workspace  # User workspace & deliverables
+    environment:
+      - NODE_ENV=production
+      - RUN_MODE=docker
+      - AI_PARTNER_DATA_DIR=/data
+      - AI_PARTNER_WORKSPACE_DIR=/workspace
+      - AI_PARTNER_HOST_WORKSPACE=${HOST_WORKSPACE:-aipartner-workspace}
+      - SEARXNG_ENDPOINT=http://searxng:8080
+      - OLLAMA_HOST=${OLLAMA_HOST:-http://host.docker.internal:11434}
+      - AI_PARTNER_JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - AI_PARTNER_AUTH_ENABLED=${AUTH_ENABLED:-false}
+      - AI_PARTNER_MASTER_KEY=${AI_PARTNER_MASTER_KEY:-}
+      # LLM provider keys (pass through from .env)
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - TOGETHER_API_KEY=${TOGETHER_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY:-}
+      - PERPLEXITY_API_KEY=${PERPLEXITY_API_KEY:-}
+      # Search provider keys
+      - BRAVE_API_KEY=${BRAVE_API_KEY:-}
+      - SERPAPI_API_KEY=${SERPAPI_API_KEY:-}
+      # Messaging bot tokens (auto-configured on startup)
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - SLACK_BOT_TOKEN=${SLACK_BOT_TOKEN:-}
+      - SLACK_APP_TOKEN=${SLACK_APP_TOKEN:-}
+      - WHATSAPP_ENABLED=${WHATSAPP_ENABLED:-false}
+      - WHATSAPP_AUTH_DIR=${WHATSAPP_AUTH_DIR:-/data/.whatsapp-auth}
+    env_file:
+      - path: .env
+        required: false
+    depends_on:
+      searxng:
+        condition: service_started   # service_started (not service_healthy) so app starts even if SearXNG is slow
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+    networks:
+      - aipartner-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # ── SearXNG Meta-Search Engine ──────────────────────────
+  searxng:
+    image: searxng/searxng:latest
+    container_name: aipartner-searxng
+    volumes:
+      - ./searxng-config:/etc/searxng:rw
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    ports:
+      - "8080:8080"
+    dns:
+      - 1.1.1.1
+    networks:
+      - aipartner-net
+
+  # ── Optional: Signal CLI REST API ───────────────────────
+  # Uncomment to enable Signal messaging integration
+  # signal:
+  #   image: bbernhard/signal-cli-rest-api:latest
+  #   container_name: aipartner-signal
+  #   volumes:
+  #     - signal-data:/home/.local/share/signal-cli
+  #   environment:
+  #     - MODE=normal
+  #   restart: unless-stopped
+  #   networks:
+  #     - aipartner-net
+
+volumes:
+  aipartner-data:          # SQLite DB, config, credentials, logs
+  aipartner-workspace:     # User workspace, output/deliverables
+    name: aipartner-workspace
+  # signal-data:           # Signal CLI data (uncomment with signal service)
+
+networks:
+  aipartner-net:
+    driver: bridge

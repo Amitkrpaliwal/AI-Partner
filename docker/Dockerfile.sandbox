@@ -1,0 +1,103 @@
+# AI Partner Sandbox Container
+# Pre-built image with common development tools for persistent execution.
+#
+# Build:
+#   docker build -t aipartner-sandbox -f docker/Dockerfile.sandbox .
+#
+# This image is used by ContainerSession when config.container.image = 'aipartner-sandbox'
+# If not built, ContainerSession falls back to 'node:20-slim' and installs tools at runtime.
+
+FROM node:20-slim
+
+LABEL maintainer="AI Partner"
+LABEL description="Sandboxed execution environment for AI Partner"
+
+# Avoid interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system tools and languages
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends \
+    # Essential tools
+    git \
+    curl \
+    wget \
+    jq \
+    vim-tiny \
+    less \
+    # Build essentials (for native npm packages)
+    build-essential \
+    # Python
+    python3 \
+    python3-pip \
+    python3-venv \
+    # Network tools
+    netcat-openbsd \
+    dnsutils \
+    # Archive tools
+    zip \
+    unzip \
+    # PDF generation (pandoc + wkhtmltopdf avoids LaTeX dependency)
+    pandoc \
+    wkhtmltopdf \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up Python symlinks
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+
+# Install common Python packages
+RUN pip3 install --no-cache-dir --break-system-packages \
+    requests \
+    flask \
+    fastapi \
+    uvicorn \
+    pytest \
+    black \
+    pylint \
+    yfinance \
+    pandas \
+    openpyxl \
+    python-docx \
+    matplotlib \
+    seaborn \
+    scipy \
+    beautifulsoup4 \
+    lxml \
+    pillow \
+    numpy \
+    cloudscraper \
+    playwright-stealth \
+    fake-useragent
+
+# Install scrapling (advanced stealth scraper) — best-effort, may fail on some platforms
+RUN pip3 install --no-cache-dir --break-system-packages scrapling 2>/dev/null || echo "[Dockerfile.sandbox] scrapling install skipped (not critical)"
+
+# Install common Node.js global packages
+RUN npm install -g \
+    typescript \
+    ts-node \
+    nodemon \
+    prettier \
+    eslint \
+    pdfkit \
+    md-to-pdf \
+    marked \
+    csv-parser \
+    csv-write-stream \
+    xlsx \
+    cheerio \
+    axios
+
+# Create workspace directory
+RUN mkdir -p /workspace
+WORKDIR /workspace
+
+# Set up environment
+ENV TERM=xterm-256color
+ENV LANG=C.UTF-8
+ENV NODE_ENV=development
+# Make globally-installed npm packages (pdfkit, csv-parser, xlsx, etc.) require()-able
+# from scripts running in /workspace without needing a local node_modules install.
+ENV NODE_PATH=/usr/local/lib/node_modules
+
+# Keep container alive (overridden by ContainerSession)
+CMD ["tail", "-f", "/dev/null"]

@@ -1,0 +1,14 @@
+{
+  "name": "crypto_price",
+  "description": "Fetch cryptocurrency price using CoinGecko API — free, no API key, no CAPTCHA",
+  "pattern": "crypto, bitcoin, ethereum, price, coin, token, defi, btc, eth",
+  "runtime": "node",
+  "tags": ["crypto", "finance", "api", "free"],
+  "parameters": [
+    { "name": "COIN_ID", "type": "string", "description": "CoinGecko coin ID (e.g. bitcoin, ethereum, solana)", "required": true },
+    { "name": "CURRENCY", "type": "string", "description": "Fiat currency (e.g. usd, inr, eur)", "required": false, "default": "usd" },
+    { "name": "WORKSPACE", "type": "path", "description": "Output directory", "required": true },
+    { "name": "OUTPUT_FILE", "type": "string", "description": "Output filename", "required": false, "default": "crypto_price.json" }
+  ],
+  "template": "const https = require('https');\nconst fs = require('fs');\nconst path = require('path');\n\nconst coinId = '{{COIN_ID}}';\nconst currency = '{{CURRENCY}}';\nconst url = `https://api.coingecko.com/api/v3/simple/price?ids=${coinId}&vs_currencies=${currency}&include_24hr_change=true&include_market_cap=true`;\n\nhttps.get(url, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (res) => {\n  let data = '';\n  res.on('data', chunk => data += chunk);\n  res.on('end', () => {\n    try {\n      const json = JSON.parse(data);\n      if (!json[coinId]) {\n        console.error('Coin not found:', coinId);\n        process.exit(1);\n      }\n      const result = {\n        coin: coinId,\n        currency: currency,\n        price: json[coinId][currency],\n        market_cap: json[coinId][currency + '_market_cap'],\n        change_24h: json[coinId][currency + '_24h_change'],\n        timestamp: new Date().toISOString()\n      };\n      const outPath = path.join('{{WORKSPACE}}', '{{OUTPUT_FILE}}');\n      fs.writeFileSync(outPath, JSON.stringify(result, null, 2));\n      console.log('Crypto price:', result.coin, result.price, result.currency.toUpperCase());\n      console.log('CREATED:', outPath);\n    } catch (e) {\n      console.error('Parse error:', e.message);\n      process.exit(1);\n    }\n  });\n}).on('error', e => { console.error(e.message); process.exit(1); });\n"
+}

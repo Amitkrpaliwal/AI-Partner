@@ -1,0 +1,32 @@
+# Signal CLI REST API - Signal messaging for AI Partner
+#
+# Usage:
+#   docker-compose -f docker-compose.signal.yml up -d
+#
+# Registration:
+#   1. Register number:  curl -X POST http://localhost:8080/v1/register/+1234567890
+#   2. Verify with code:  curl -X POST http://localhost:8080/v1/register/+1234567890/verify/123456
+#
+# API docs: http://localhost:8080/v1/api
+
+version: '3.8'
+
+services:
+  signal-cli:
+    image: bbernhard/signal-cli-rest-api:latest
+    container_name: aipartner_signal
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - MODE=normal
+    volumes:
+      - signal-data:/home/.local/share/signal-cli
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+
+volumes:
+  signal-data:

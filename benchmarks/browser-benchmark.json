@@ -1,0 +1,224 @@
+{
+  "version": "1.0",
+  "description": "Browser agent benchmark — 15 test cases on bot-friendly public sites",
+  "gate_thresholds": {
+    "tier1_basic": { "tests": ["B01","B02","B03","B04","B05"], "pass": 4 },
+    "tier2_action": { "tests": ["B06","B07","B08","B09","B10"], "pass": 3 },
+    "tier3_autonomous": { "tests": ["B11","B12","B13","B14","B15"], "pass": 3 },
+    "full_gate": { "pass": 10 }
+  },
+  "benchmarks": [
+    {
+      "id": "B01",
+      "tier": 1,
+      "name": "Eventbrite Free Event RSVP",
+      "prompt": "Go to https://www.eventbrite.com/d/online/free--events/\nFind the first free online AI or tech event. Click on it.\nFill the registration form with Name: Amit Paliwal, Email: test@amit.com.\nSubmit RSVP. Screenshot the confirmation page.\nSave event-details.json with event name, date, URL, confirmation status.",
+      "expected_tools": ["browser_navigate", "browser_click", "browser_type", "browser_screenshot", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "event-details.json" } },
+        { "type": "file_exists", "config": { "path": "confirmation.png" } },
+        { "type": "llm_evaluates", "config": { "expected": "event-details.json contains event name, date, and URL fields" } }
+      ],
+      "hitl_expected": true,
+      "notes": "Registration may require HITL for bot-detection. Browser must be used."
+    },
+    {
+      "id": "B02",
+      "tier": 1,
+      "name": "Wikipedia Research + PDF Summary",
+      "prompt": "Go to https://en.wikipedia.org/wiki/Multi-agent_system\nExtract the Introduction and Applications sections.\nScreenshot the page. Save summary.md with 10 key facts.\nCreate report.pdf from the markdown using pandoc.",
+      "expected_tools": ["browser_navigate", "browser_get_content", "browser_screenshot", "write_file", "run_command"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "summary.md" } },
+        { "type": "file_exists", "config": { "path": "report.pdf" } },
+        { "type": "file_contains", "config": { "path": "summary.md", "pattern": "agent" } }
+      ],
+      "hitl_expected": false,
+      "notes": "Wikipedia has zero bot protection. PDF via pandoc (in sandbox)."
+    },
+    {
+      "id": "B03",
+      "tier": 1,
+      "name": "Hacker News Jobs CSV",
+      "prompt": "Go to https://news.ycombinator.com/jobs\nExtract all visible job listings: company name, role, URL.\nSave to jobs.csv with columns: company, role, url, scraped_date.\nScreenshot the page. Create top5.md with your recommended picks.",
+      "expected_tools": ["browser_navigate", "browser_get_content", "write_file", "run_command"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "jobs.csv" } },
+        { "type": "file_contains", "config": { "path": "jobs.csv", "pattern": ".com" } },
+        { "type": "file_exists", "config": { "path": "top5.md" } }
+      ],
+      "hitl_expected": false,
+      "notes": "HN has no bot protection, simple HTML."
+    },
+    {
+      "id": "B04",
+      "tier": 1,
+      "name": "GitHub Trending Repos",
+      "prompt": "Go to https://github.com/trending?since=daily&spoken_language_code=en\nExtract top 10 trending repos: name, stars today, description, URL.\nSave trending.json. Create alert.md if any repo has >500 stars today.\nScreenshot the trending page.",
+      "expected_tools": ["browser_navigate", "browser_get_content", "browser_screenshot", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "trending.json" } },
+        { "type": "file_exists", "config": { "path": "trending-screenshot.png" } },
+        { "type": "file_contains", "config": { "path": "trending.json", "pattern": "stars" } }
+      ],
+      "hitl_expected": false,
+      "notes": "GitHub trending is static HTML, always accessible."
+    },
+    {
+      "id": "B05",
+      "tier": 1,
+      "name": "arXiv Paper Fetch + Summary",
+      "prompt": "Go to https://arxiv.org/search/?searchtype=all&query=AI+agent+orchestration&start=0\nFind the first 3 papers. Extract title, authors, abstract, PDF link.\nSave papers.json. For each paper write a 3-sentence summary in summaries.md.\nScreenshot the search results page.",
+      "expected_tools": ["browser_navigate", "browser_get_content", "browser_screenshot", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "papers.json" } },
+        { "type": "file_exists", "config": { "path": "summaries.md" } },
+        { "type": "file_contains", "config": { "path": "papers.json", "pattern": "abstract" } }
+      ],
+      "hitl_expected": false,
+      "notes": "arXiv is academic, no bot protection."
+    },
+    {
+      "id": "B06",
+      "tier": 2,
+      "name": "Product Hunt AI Products",
+      "prompt": "Go to https://www.producthunt.com/topics/artificial-intelligence\nExtract today's top 5 AI products: name, tagline, upvotes, URL.\nSave to products.json. Create competitive-analysis.md comparing them\nagainst AI Partner on: pricing, features, target user.\nScreenshot the page.",
+      "expected_tools": ["browser_navigate", "browser_scroll", "browser_get_content", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "products.json" } },
+        { "type": "file_exists", "config": { "path": "competitive-analysis.md" } },
+        { "type": "file_contains", "config": { "path": "competitive-analysis.md", "pattern": "AI Partner" } }
+      ],
+      "hitl_expected": false,
+      "notes": "Product Hunt uses JS — browser_get_content handles it."
+    },
+    {
+      "id": "B07",
+      "tier": 2,
+      "name": "Yahoo Finance Stock Data",
+      "prompt": "Go to https://finance.yahoo.com/quote/RELIANCE.NS/\nExtract current price, day high, day low, 52-week range, volume.\nSave stock-data.json. Generate a price summary as chart.png using Python matplotlib.\nWrite analysis.md: is price above 52-week average? Buy/Hold/Sell signal.",
+      "expected_tools": ["browser_navigate", "browser_get_content", "write_file", "run_command"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "stock-data.json" } },
+        { "type": "file_exists", "config": { "path": "chart.png" } },
+        { "type": "file_exists", "config": { "path": "analysis.md" } }
+      ],
+      "hitl_expected": false,
+      "notes": "Yahoo Finance replaces NSE (which blocks bots). No Cloudflare."
+    },
+    {
+      "id": "B08",
+      "tier": 2,
+      "name": "Eventbrite Meetup + Calendar",
+      "prompt": "Go to https://www.eventbrite.com/d/online/free--events/?q=AI+meetup\nFind the next 3 free AI or tech meetups. Extract name, date, time, URL, description.\nSave meetups.json. Create calendar.ics with all 3 events in standard iCalendar format.\nScreenshot the results page.",
+      "expected_tools": ["browser_navigate", "browser_get_content", "browser_screenshot", "write_file", "run_command"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "meetups.json" } },
+        { "type": "file_exists", "config": { "path": "calendar.ics" } },
+        { "type": "file_contains", "config": { "path": "calendar.ics", "pattern": "BEGIN:VEVENT" } }
+      ],
+      "hitl_expected": false,
+      "notes": "Eventbrite replaces Meetup.com (which requires login). Public listings work."
+    },
+    {
+      "id": "B09",
+      "tier": 2,
+      "name": "Old Reddit Thread Summarizer",
+      "prompt": "Go to https://old.reddit.com/r/artificial/top/?t=week\nFind the top post this week. Open it. Extract the post + top 10 comments.\nSave thread.json with post title, content, comments array.\nCreate digest.md: 5 key insights from the discussion.\nScreenshot the thread.",
+      "expected_tools": ["browser_navigate", "browser_click", "browser_get_content", "browser_screenshot", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "thread.json" } },
+        { "type": "file_exists", "config": { "path": "digest.md" } },
+        { "type": "file_contains", "config": { "path": "thread.json", "pattern": "comments" } }
+      ],
+      "hitl_expected": false,
+      "notes": "old.reddit.com is plain HTML — far more reliable than new Reddit."
+    },
+    {
+      "id": "B10",
+      "tier": 2,
+      "name": "DuckDuckGo Multi-Source Research",
+      "prompt": "Search DuckDuckGo for 'AI agent frameworks comparison 2026' at https://duckduckgo.com\nClick the first 3 results. Extract key content from each page.\nSave sources.json with URL + 200-word summary per source.\nCreate research-report.md with synthesized findings across all 3 sources.",
+      "expected_tools": ["browser_navigate", "browser_click", "browser_get_content", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "sources.json" } },
+        { "type": "file_exists", "config": { "path": "research-report.md" } },
+        { "type": "file_contains", "config": { "path": "sources.json", "pattern": "url" } }
+      ],
+      "hitl_expected": false,
+      "notes": "DuckDuckGo itself works. Per-site content varies."
+    },
+    {
+      "id": "B11",
+      "tier": 3,
+      "name": "Books to Scrape Price Monitor",
+      "prompt": "Go to https://books.toscrape.com/catalogue/category/books/mystery_3/index.html\nExtract prices of first 10 mystery books: title, price, rating, availability.\nSave price-snapshot.json with timestamp.\nIf any book costs under £10, write alert.txt with those book details.\nScreenshot the results.",
+      "expected_tools": ["browser_navigate", "browser_get_content", "browser_screenshot", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "price-snapshot.json" } },
+        { "type": "file_exists", "config": { "path": "price-screenshot.png" } },
+        { "type": "file_contains", "config": { "path": "price-snapshot.json", "pattern": "timestamp" } }
+      ],
+      "hitl_expected": false,
+      "notes": "books.toscrape.com is purpose-built for scraping. Always works."
+    },
+    {
+      "id": "B12",
+      "tier": 3,
+      "name": "Hacker News Morning Digest",
+      "prompt": "Go to https://news.ycombinator.com\nExtract top 10 stories: title, URL, points, comment count.\nSave hn-digest.json. Create morning-brief.md formatted as a daily newsletter\nwith headline, one-line summary per story, and a 'Story of the Day' pick.\nScreenshot the front page.",
+      "expected_tools": ["browser_navigate", "browser_get_content", "browser_screenshot", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "hn-digest.json" } },
+        { "type": "file_exists", "config": { "path": "morning-brief.md" } },
+        { "type": "file_contains", "config": { "path": "morning-brief.md", "pattern": "Story of the Day" } }
+      ],
+      "hitl_expected": false,
+      "notes": "HN is simple HTML. Should be a reliable pass."
+    },
+    {
+      "id": "B13",
+      "tier": 3,
+      "name": "GitHub Public Profile Scrape",
+      "prompt": "Go to https://github.com/torvalds\nExtract name, bio, location, public repos count, top pinned repositories.\nFor each pinned repo: name, description, stars, language.\nSave profile.json. Write outreach-draft.md: a personalized message based on their work.\nScreenshot the profile.",
+      "expected_tools": ["browser_navigate", "browser_get_content", "browser_screenshot", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "profile.json" } },
+        { "type": "file_exists", "config": { "path": "outreach-draft.md" } },
+        { "type": "file_exists", "config": { "path": "profile-screenshot.png" } }
+      ],
+      "hitl_expected": false,
+      "notes": "GitHub public profiles need no login. Replaces LinkedIn."
+    },
+    {
+      "id": "B14",
+      "tier": 3,
+      "name": "YouTube Video Research + Notes",
+      "prompt": "Go to https://www.youtube.com/results?search_query=AI+agent+demo+2026\nFind the top 3 videos. Extract title, channel, view count (if visible), URL.\nSave videos.json. For each video write a predicted summary based on title/description.\nCreate watch-list.md ranking them by relevance to AI agent development.",
+      "expected_tools": ["browser_navigate", "browser_get_content", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "videos.json" } },
+        { "type": "file_exists", "config": { "path": "watch-list.md" } },
+        { "type": "file_contains", "config": { "path": "videos.json", "pattern": "channel" } }
+      ],
+      "hitl_expected": false,
+      "notes": "YouTube search page is accessible. View counts may need JS."
+    },
+    {
+      "id": "B15",
+      "tier": 3,
+      "name": "Multi-Site Daily Brief (Hero Demo)",
+      "prompt": "You are my research assistant. Without interruption:\n1. Scrape GitHub trending (https://github.com/trending) — top 5 AI repos\n2. Scrape HN front page (https://news.ycombinator.com) — top 3 AI stories\n3. Scrape arXiv (https://arxiv.org/list/cs.AI/recent) — latest 3 AI papers\nCombine all into daily-brief.json with sections: repos, news, papers.\nCreate daily-brief.md as a formatted newsletter. Screenshot each site.\nTotal files expected: daily-brief.json, daily-brief.md, github.png, hn.png, arxiv.png",
+      "expected_tools": ["browser_navigate", "browser_get_content", "browser_screenshot", "write_file"],
+      "success_criteria": [
+        { "type": "file_exists", "config": { "path": "daily-brief.json" } },
+        { "type": "file_exists", "config": { "path": "daily-brief.md" } },
+        { "type": "file_exists", "config": { "path": "github.png" } },
+        { "type": "file_exists", "config": { "path": "hn.png" } },
+        { "type": "file_exists", "config": { "path": "arxiv.png" } }
+      ],
+      "hitl_expected": false,
+      "notes": "Hero demo. GitHub + HN + arXiv all accessible. Run this last."
+    }
+  ]
+}

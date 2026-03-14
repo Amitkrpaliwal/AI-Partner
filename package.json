@@ -1,0 +1,35 @@
+{
+  "name": "ai-coworker-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev -w server\" \"npm run dev -w client\"",
+    "build": "npm run build -w shared && npm run build -w server && npm run build -w client",
+    "test": "npm run test -w shared && npm run test -w server && npm run test -w client",
+    "cli": "npx tsx cli/index.ts"
+  },
+  "bin": {
+    "ai-partner": "./cli/index.ts"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.5.1",
+    "@types/node-telegram-bot-api": "^0.64.13",
+    "@types/supertest": "^6.0.3",
+    "concurrently": "^8.2.0",
+    "express": "^5.2.1",
+    "supertest": "^7.2.2",
+    "typescript": "^5.2.2",
+    "vitest": "^4.0.18"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc.9",
+    "discord.js": "^14.25.1",
+    "node-telegram-bot-api": "^0.67.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "weather_fetch",
+  "description": "Fetch current weather for any city using wttr.in — free, no API key needed",
+  "pattern": "weather, temperature, forecast, rain, humidity, city, climate",
+  "runtime": "node",
+  "tags": ["weather", "api", "free"],
+  "parameters": [
+    { "name": "CITY", "type": "string", "description": "City name (e.g. Mumbai, London, New+York)", "required": true },
+    { "name": "WORKSPACE", "type": "path", "description": "Output directory", "required": true },
+    { "name": "OUTPUT_FILE", "type": "string", "description": "Output filename", "required": false, "default": "weather.json" }
+  ],
+  "template": "const https = require('https');\nconst fs = require('fs');\nconst path = require('path');\n\nconst city = encodeURIComponent('{{CITY}}');\nconst url = `https://wttr.in/${city}?format=j1`;\n\nhttps.get(url, { headers: { 'User-Agent': 'curl/7.0' } }, (res) => {\n  let data = '';\n  res.on('data', chunk => data += chunk);\n  res.on('end', () => {\n    try {\n      const json = JSON.parse(data);\n      const current = json.current_condition[0];\n      const result = {\n        city: '{{CITY}}',\n        temp_c: current.temp_C,\n        temp_f: current.temp_F,\n        feels_like_c: current.FeelsLikeC,\n        humidity: current.humidity,\n        description: current.weatherDesc[0].value,\n        wind_kmph: current.windspeedKmph,\n        timestamp: new Date().toISOString()\n      };\n      const outPath = path.join('{{WORKSPACE}}', '{{OUTPUT_FILE}}');\n      fs.writeFileSync(outPath, JSON.stringify(result, null, 2));\n      console.log('Weather fetched:', result.city, result.temp_c + '°C', result.description);\n      console.log('CREATED:', outPath);\n    } catch (e) {\n      console.error('Parse error:', e.message);\n      process.exit(1);\n    }\n  });\n}).on('error', e => { console.error(e.message); process.exit(1); });\n"
+}

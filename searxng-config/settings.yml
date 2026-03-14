@@ -1,0 +1,78 @@
+# SearXNG Configuration for AI Partner
+# See: https://docs.searxng.org/admin/settings.html
+
+use_default_settings: true
+
+general:
+  debug: false
+  instance_name: "AI Partner Search"
+
+search:
+  safe_search: 0
+  autocomplete: ""
+  default_lang: "en"
+  formats:
+    - html
+    - json
+
+server:
+  port: 8080
+  bind_address: "0.0.0.0"
+  secret_key: "change-this-to-a-random-string"
+  limiter: false
+  image_proxy: false
+
+ui:
+  static_use_hash: true
+  default_theme: simple
+  results_on_new_tab: false
+
+engines:
+  # Google — most comprehensive results
+  - name: google
+    engine: google
+    shortcut: g
+    disabled: false
+
+  # Bing — good secondary source
+  - name: bing
+    engine: bing
+    shortcut: b
+    disabled: false
+
+  # DuckDuckGo — privacy-focused
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    disabled: false
+
+  # Wikipedia — knowledge base
+  - name: wikipedia
+    engine: wikipedia
+    shortcut: wp
+    disabled: false
+
+  # GitHub — code search
+  - name: github
+    engine: github
+    shortcut: gh
+    disabled: false
+
+  # Disable engines that are slow or unreliable
+  - name: yahoo
+    engine: yahoo
+    disabled: true
+
+  - name: qwant
+    engine: qwant
+    disabled: true
+
+outgoing:
+  request_timeout: 10.0
+  max_request_timeout: 20.0
+  useragent_suffix: ""
+  pool_connections: 100
+  pool_maxsize: 20
+  enable_http2: true
+  # Force IPv4 to avoid IPv6 timeouts in Docker
+  source_ip: 0.0.0.0
