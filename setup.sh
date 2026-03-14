@@ -127,6 +127,27 @@ fi
 # MODE: INSTALL
 # ═══════════════════════════════════════════════════════════════════
 
+# ── Clone repo if running via curl pipe ──────────────────────────
+# When piped through curl the user's CWD won't have the repo files.
+# Clone into ~/AI-Partner if docker-compose.yml isn't present here.
+if [ ! -f docker-compose.yml ]; then
+    log_info "Cloning AI-Partner repository..."
+    if ! command -v git >/dev/null 2>&1; then
+        log_err "git is required. Install git and re-run."
+        exit 1
+    fi
+    REPO_URL="https://github.com/AmitkrPaiwal/AI-Partner.git"
+    DEST="$HOME/AI-Partner"
+    if [ -d "$DEST/.git" ]; then
+        log_info "Existing clone found at $DEST — pulling latest..."
+        git -C "$DEST" pull --ff-only 2>/dev/null || true
+    else
+        git clone "$REPO_URL" "$DEST"
+    fi
+    cd "$DEST"
+    log_ok "Repository ready at $DEST"
+fi
+
 # ── Step 1: Check Docker ─────────────────────────────────────────
 echo "${BOLD}Step 1/4 — Checking requirements${RESET}"
 
@@ -251,35 +272,35 @@ else
             echo "     Get a free Groq key at: https://console.groq.com"
             prompt_secret LLM_KEY_VAL "Groq API key"
             LLM_KEY_VAR="GROQ_API_KEY"
-            has_key=1
+            [ -n "$LLM_KEY_VAL" ] && has_key=1 || has_key=0
             ;;
         2)
             echo ""
             echo "     Get your key at: https://platform.openai.com/api-keys"
             prompt_secret LLM_KEY_VAL "OpenAI API key"
             LLM_KEY_VAR="OPENAI_API_KEY"
-            has_key=1
+            [ -n "$LLM_KEY_VAL" ] && has_key=1 || has_key=0
             ;;
         3)
             echo ""
             echo "     Get your key at: https://console.anthropic.com"
             prompt_secret LLM_KEY_VAL "Anthropic API key"
             LLM_KEY_VAR="ANTHROPIC_API_KEY"
-            has_key=1
+            [ -n "$LLM_KEY_VAL" ] && has_key=1 || has_key=0
             ;;
         4)
             echo ""
             echo "     Get your key at: https://platform.deepseek.com"
             prompt_secret LLM_KEY_VAL "DeepSeek API key"
             LLM_KEY_VAR="DEEPSEEK_API_KEY"
-            has_key=1
+            [ -n "$LLM_KEY_VAL" ] && has_key=1 || has_key=0
             ;;
         5)
             echo ""
             echo "     Get your key at: https://aistudio.google.com/app/apikey"
             prompt_secret LLM_KEY_VAL "Google API key"
             LLM_KEY_VAR="GOOGLE_API_KEY"
-            has_key=1
+            [ -n "$LLM_KEY_VAL" ] && has_key=1 || has_key=0
             ;;
         6)
             log_warn "Manual mode — you'll need to add a key to .env before the app will work"
