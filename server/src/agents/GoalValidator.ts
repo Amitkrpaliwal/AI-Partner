@@ -888,16 +888,33 @@ Do not include any other text before the RESULT line.`;
         // On Windows, path.isAbsolute('/workspace/foo') returns true but resolves to the
         // drive root (C:\workspace\foo), not workspaceDir. Strip the /workspace prefix first.
         let normalized = filePath.replace(/\\/g, '/');
-        // Auto-fix paths like /trending-docs/foo.json that are missing the /workspace prefix.
-        // GoalExtractor sometimes emits root-relative paths — normalise them here so
-        // file_exists checks don't fail with "path outside allowed directories".
-        if (normalized.startsWith('/') && !normalized.startsWith('/workspace')) {
-            normalized = '/workspace' + normalized;
-        }
+
         if (normalized.startsWith('/workspace/') || normalized === '/workspace') {
             const relative = normalized.slice('/workspace'.length).replace(/^\//, '');
             return path.join(this.workspaceDir, relative);
         }
+
+        if (normalized.startsWith('/') && !normalized.startsWith('/workspace')) {
+            // Auto-fix agent-generated paths like /trending-docs/foo.json that are
+            // missing the /workspace prefix (paths emitted from inside the Docker container).
+            // Do NOT touch real host system paths (/tmp, /home, /var, etc.) — these are
+            // absolute paths on the host filesystem, not Docker workspace-relative paths.
+            const wdNorm = this.workspaceDir.replace(/\\/g, '/');
+            const isUnderWorkspaceDir = normalized.startsWith(wdNorm);
+            const SYSTEM_ROOTS = ['/tmp/', '/home/', '/var/', '/usr/', '/etc/',
+                '/proc/', '/sys/', '/opt/', '/root/', '/dev/', '/run/', '/mnt/', '/media/'];
+            const isSystemPath = SYSTEM_ROOTS.some(r => normalized.startsWith(r));
+
+            if (!isUnderWorkspaceDir && !isSystemPath) {
+                // Looks like an agent-emitted workspace-relative path — prepend /workspace
+                normalized = '/workspace' + normalized;
+                const relative = normalized.slice('/workspace'.length).replace(/^\//, '');
+                return path.join(this.workspaceDir, relative);
+            }
+            // Real absolute path (system path or already under workspaceDir) — return as-is
+            return filePath;
+        }
+
         if (path.isAbsolute(filePath)) {
             return filePath;
         }
