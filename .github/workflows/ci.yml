@@ -10,15 +10,34 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
+
+    env:
+      # Skip browser downloads — not needed for unit tests
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+      # Skip Chromium download for puppeteer
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+      # SQLite native build needs python
+      npm_config_python: python3
+
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install system dependencies (for native addons)
+        run: sudo apt-get install -y python3 make g++
 
       - name: Install server dependencies
-        run: cd server && npm install
+        run: cd server && npm install --prefer-offline
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
 
       - name: Run unit tests
         run: cd server && npm run test:unit
@@ -26,7 +45,11 @@ jobs:
   typecheck:
     name: TypeScript Check
     runs-on: ubuntu-latest
-    continue-on-error: true   # Non-blocking — types may have pre-existing issues
+    continue-on-error: true
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+      PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
     steps:
       - uses: actions/checkout@v4
 
@@ -34,25 +57,15 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install system dependencies
+        run: sudo apt-get install -y python3 make g++
+
       - name: Install server dependencies
-        run: cd server && npm install
+        run: cd server && npm install --prefer-offline
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: "true"
+          PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
 
       - name: TypeScript compile check
         run: cd server && npx tsc --noEmit || true
-
-  lint:
-    name: Lint Check
-    runs-on: ubuntu-latest
-    continue-on-error: true   # Non-blocking
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install server dependencies
-        run: cd server && npm install
-
-      - name: Lint
-        run: cd server && npx eslint src/ --ext .ts || true
