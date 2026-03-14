@@ -129,12 +129,79 @@ fi
 
 # ── Step 1: Check Docker ─────────────────────────────────────────
 echo "${BOLD}Step 1/4 — Checking requirements${RESET}"
+
+install_docker_linux() {
+    log_info "Installing Docker Engine via get.docker.com..."
+    if ! curl -fsSL https://get.docker.com | sh; then
+        log_err "Docker install failed. Please install manually:"
+        echo "     https://docs.docker.com/engine/install/"
+        exit 1
+    fi
+    # Add current user to docker group so we don't need sudo for docker commands
+    if id -nG "$USER" | grep -qw docker; then
+        : # already in group
+    else
+        sudo usermod -aG docker "$USER" 2>/dev/null || true
+    fi
+    # Start Docker service
+    sudo systemctl start docker 2>/dev/null || sudo service docker start 2>/dev/null || true
+    log_ok "Docker installed successfully"
+    log_warn "You may need to log out and back in for group membership to take effect."
+    log_info "Continuing setup in sudo context for this session..."
+}
+
 if ! docker version >/dev/null 2>&1; then
-    log_err "Docker is not running."
+    OS_TYPE="$(uname -s)"
+    log_warn "Docker is not running or not installed."
     echo ""
-    echo "     Install Docker Desktop and start it, then run this script again."
-    echo "     Download: https://www.docker.com/products/docker-desktop/"
-    exit 1
+
+    if [ "$OS_TYPE" = "Linux" ]; then
+        if [ "$INTERACTIVE" = "true" ]; then
+            printf "     ${BOLD}Install Docker automatically now? [Y/n]:${RESET} "
+            read -r do_install
+            if [ -z "$do_install" ] || [ "$do_install" = "y" ] || [ "$do_install" = "Y" ]; then
+                install_docker_linux
+            else
+                echo ""
+                echo "     Install Docker manually, then re-run this script:"
+                echo "       https://docs.docker.com/engine/install/"
+                exit 1
+            fi
+        else
+            # Non-interactive (curl pipe) — auto-install silently
+            install_docker_linux
+        fi
+    elif [ "$OS_TYPE" = "Darwin" ]; then
+        echo "     macOS detected. Options:"
+        echo ""
+        if command -v brew >/dev/null 2>&1; then
+            if [ "$INTERACTIVE" = "true" ]; then
+                printf "     ${BOLD}Install Docker Desktop via Homebrew? [Y/n]:${RESET} "
+                read -r do_brew
+            else
+                do_brew="Y"
+            fi
+            if [ -z "$do_brew" ] || [ "$do_brew" = "y" ] || [ "$do_brew" = "Y" ]; then
+                log_info "Running: brew install --cask docker"
+                brew install --cask docker
+                log_ok "Docker Desktop installed. Please open Docker from Applications and wait for it to start, then re-run this script."
+                exit 0
+            fi
+        fi
+        echo "     Download Docker Desktop for Mac and start it, then re-run:"
+        echo "     https://www.docker.com/products/docker-desktop/"
+        exit 1
+    else
+        echo "     Install Docker Desktop and start it, then run this script again."
+        echo "     Download: https://www.docker.com/products/docker-desktop/"
+        exit 1
+    fi
+
+    # Re-check after install attempt
+    if ! docker version >/dev/null 2>&1; then
+        log_err "Docker still not responding. Please start Docker and re-run."
+        exit 1
+    fi
 fi
 log_ok "Docker is running"
 

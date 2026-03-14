@@ -103,16 +103,55 @@ if ($Reset) {
 # ── Step 1: Check Docker ───────────────────────────────────────────
 Write-Host "`n  Step 1/4 — Checking requirements" -ForegroundColor White
 
+function Install-DockerWindows {
+    # Try winget first (available on Windows 10 1709+ and Windows 11)
+    if (Get-Command winget -ErrorAction SilentlyContinue) {
+        Write-Info "Installing Docker Desktop via winget..."
+        try {
+            winget install Docker.DockerDesktop --silent --accept-package-agreements --accept-source-agreements
+            Write-Ok "Docker Desktop installed."
+        } catch {
+            Write-Warn "winget install encountered an issue: $_"
+        }
+    } else {
+        Write-Warn "winget not available. Cannot auto-install Docker."
+        Write-Host ""
+        Write-Host "     Download Docker Desktop from:" -ForegroundColor White
+        Write-Host "     https://www.docker.com/products/docker-desktop/" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "     Install it, start Docker Desktop, then re-run this script." -ForegroundColor White
+        exit 1
+    }
+
+    Write-Host ""
+    Write-Warn "Docker Desktop was just installed. You need to:"
+    Write-Host "     1. Open Docker Desktop from the Start Menu" -ForegroundColor White
+    Write-Host "     2. Accept the license agreement and wait for it to fully start" -ForegroundColor White
+    Write-Host "     3. Re-run this installer:  .\install.ps1" -ForegroundColor Cyan
+    Write-Host ""
+    exit 0
+}
+
+$dockerOk = $false
 try {
     $null = docker version 2>&1
-    Write-Ok "Docker is running"
-} catch {
-    Write-Err "Docker is not running or not installed."
+    $dockerOk = $LASTEXITCODE -eq 0
+} catch { }
+
+if (-not $dockerOk) {
+    Write-Warn "Docker is not running or not installed."
     Write-Host ""
-    Write-Host "     Install Docker Desktop and start it, then run this script again."
-    Write-Host "     Download: https://www.docker.com/products/docker-desktop/"
-    exit 1
+    $doInstall = Read-Host "     Install Docker Desktop automatically via winget? [Y/n]"
+    if (-not $doInstall -or $doInstall -eq 'y' -or $doInstall -eq 'Y') {
+        Install-DockerWindows
+    } else {
+        Write-Host ""
+        Write-Host "     Download Docker Desktop and start it, then re-run this script:" -ForegroundColor White
+        Write-Host "     https://www.docker.com/products/docker-desktop/" -ForegroundColor Cyan
+        exit 1
+    }
 }
+Write-Ok "Docker is running"
 
 # ── Step 2: LLM Provider ───────────────────────────────────────────
 Write-Host "`n  Step 2/4 — Choose your AI model provider" -ForegroundColor White
