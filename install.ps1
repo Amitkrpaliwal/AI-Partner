@@ -100,6 +100,27 @@ if ($Reset) {
 
 # ── INSTALL mode ───────────────────────────────────────────────────
 
+# ── Clone repo if running via iwr | iex ────────────────────────────
+# When piped through iex the user's CWD won't have the repo files.
+# Clone into $HOME\AI-Partner if docker-compose.yml isn't present here.
+if (-not (Test-Path "docker-compose.yml")) {
+    Write-Info "Cloning AI-Partner repository..."
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+        Write-Err "git is required. Install Git for Windows (https://git-scm.com) and re-run."
+        exit 1
+    }
+    $repoUrl = "https://github.com/AmitkrPaiwal/AI-Partner.git"
+    $dest = Join-Path $HOME "AI-Partner"
+    if (Test-Path (Join-Path $dest ".git")) {
+        Write-Info "Existing clone found at $dest — pulling latest..."
+        git -C $dest pull --ff-only 2>$null
+    } else {
+        git clone $repoUrl $dest
+    }
+    Set-Location $dest
+    Write-Ok "Repository ready at $dest"
+}
+
 # ── Step 1: Check Docker ───────────────────────────────────────────
 Write-Host "`n  Step 1/4 — Checking requirements" -ForegroundColor White
 
