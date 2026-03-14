@@ -35,10 +35,14 @@ jobs:
         run: sudo apt-get install -y python3 make g++
 
       # Install from repo ROOT so npm resolves the @ai-coworker/shared
-      # workspace dependency correctly (cd server && npm install would fail
-      # because it can't find the local workspace package in the registry).
+      # workspace dependency correctly.
+      #
+      # We delete package-lock.json first because it was generated on Windows
+      # and locks Windows-specific optional binaries (e.g. @rollup/rollup-win32-x64-msvc).
+      # On Linux, npm would skip @rollup/rollup-linux-x64-gnu and rollup crashes at runtime.
+      # Deleting the lock lets npm resolve the correct platform binaries fresh.
       - name: Install workspace dependencies
-        run: npm install --legacy-peer-deps --no-audit --no-fund
+        run: rm -f package-lock.json && npm install --legacy-peer-deps --no-audit --no-fund
         env:
           PUPPETEER_SKIP_DOWNLOAD: "true"
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
@@ -69,7 +73,7 @@ jobs:
         run: sudo apt-get install -y python3 make g++
 
       - name: Install workspace dependencies
-        run: npm install --legacy-peer-deps --no-audit --no-fund
+        run: rm -f package-lock.json && npm install --legacy-peer-deps --no-audit --no-fund
         env:
           PUPPETEER_SKIP_DOWNLOAD: "true"
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
