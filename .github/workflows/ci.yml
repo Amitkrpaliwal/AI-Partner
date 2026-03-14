@@ -15,8 +15,9 @@ jobs:
       # Skip browser downloads — not needed for unit tests
       PUPPETEER_SKIP_DOWNLOAD: "true"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
-      # Skip Chromium download for puppeteer
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
+      # Skip husky git hooks (no .git context in CI)
+      HUSKY: "0"
       # SQLite native build needs python
       npm_config_python: python3
 
@@ -27,20 +28,24 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
-          cache-dependency-path: server/package-lock.json
+          # Lock file lives at the repo root (monorepo workspace)
+          cache-dependency-path: package-lock.json
 
       - name: Install system dependencies (for native addons)
         run: sudo apt-get install -y python3 make g++
 
       - name: Install server dependencies
-        run: cd server && npm install --prefer-offline
+        working-directory: server
+        run: npm install --legacy-peer-deps --no-audit --no-fund
         env:
           PUPPETEER_SKIP_DOWNLOAD: "true"
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+          HUSKY: "0"
 
       - name: Run unit tests
-        run: cd server && npm run test:unit
+        working-directory: server
+        run: npm run test:unit
 
   typecheck:
     name: TypeScript Check
@@ -50,6 +55,7 @@ jobs:
       PUPPETEER_SKIP_DOWNLOAD: "true"
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+      HUSKY: "0"
     steps:
       - uses: actions/checkout@v4
 
@@ -61,11 +67,14 @@ jobs:
         run: sudo apt-get install -y python3 make g++
 
       - name: Install server dependencies
-        run: cd server && npm install --prefer-offline
+        working-directory: server
+        run: npm install --legacy-peer-deps --no-audit --no-fund
         env:
           PUPPETEER_SKIP_DOWNLOAD: "true"
           PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: "true"
           PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
+          HUSKY: "0"
 
       - name: TypeScript compile check
-        run: cd server && npx tsc --noEmit || true
+        working-directory: server
+        run: npx tsc --noEmit || true
