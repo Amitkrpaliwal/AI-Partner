@@ -6,29 +6,21 @@ Add, remove, or edit tasks below. Tasks with time qualifiers are only triggered 
 ---
 
 ## Morning Briefing (every morning)
-- [ ] Fetch top NSE/BSE market movers and overnight global news that could affect Indian markets
-- [ ] Summarize any major events (earnings, RBI decisions, FII/DII data) for today
-
-## Market Hours (market hours)
-- [ ] Check live prices of Nifty 50 and Sensex; note % change from previous close
-- [ ] Alert if any Nifty 50 stock has moved more than 5% intraday
-
-## Evening Recap (evening)
-- [ ] Summarize today's stock market performance (Nifty 50, Sensex, top gainers/losers)
-- [ ] List workspace files created or modified today
-- [ ] Highlight any tasks left incomplete from today
+- [ ] Summarize the top news headlines relevant to your work or interests
+- [ ] List any tasks left incomplete from yesterday
 
 ## Research (daily)
-- [ ] Check for major crypto price movements (BTC, ETH) and summarize in one paragraph
-- [ ] Look for trending AI/ML papers or tools released in the last 24 hours
+- [ ] Look for trending tools or papers in your area of interest released in the last 24 hours
 
 ## Development (weekdays)
-- [ ] Scan workspace for any Python or TypeScript errors in recently modified files
+- [ ] Scan workspace for any errors in recently modified files
 - [ ] Check git status and summarize uncommitted changes if any
 
----
+## Weekly Review (every Monday)
+- [ ] Summarize key achievements from last week
+- [ ] Suggest top 3 priorities for this week
 
-*Edit this file to customize what the agent monitors. Supported time qualifiers:*
-- *morning, evening, daily, weekday, market hours*
-- *every Monday / every Friday (specific weekday)*
-- *every 2 hours (frequency-based)*
+---
+*Edit this file to customize what the agent monitors automatically.*
+*Supported time qualifiers: morning, evening, daily, weekday, market hours,*
+*every Monday / every Friday, every 2 hours*

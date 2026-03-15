@@ -16,6 +16,7 @@ dist-server/
 *.db-shm
 *.db-wal
 coworker.db
+server/data/
 
 # ── Logs & test artifacts ─────────────────────────────
 *.log

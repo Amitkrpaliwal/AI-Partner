@@ -1,24 +1,23 @@
 # User Profile
 
 <!-- Keep this file under 800 characters.
-     Move detailed preferences to skill templates or agent profiles. -->
+     The agent reads this on every goal execution to understand your context.
+     Edit it from Settings → User Profile. -->
 
 ## Context
-- Location: Delhi, India (IST timezone)
-- Role: Developer and quantitative analyst
-- Focus: AI/ML tooling, Indian markets (NSE/BSE), open-source
+- Location: (set your city / timezone)
+- Role: (e.g. developer, analyst, researcher)
+- Focus: (e.g. AI/ML, finance, web development)
 
 ## Technical Stack
-- Backend: TypeScript (preferred over JS always), Node.js
-- Data: Python, pandas, yfinance, numpy
-- Frontend: React + Tailwind
-
-## Market Interests
-- NSE/BSE: Nifty 50, F&O, use symbol.NS format for Yahoo Finance
-- Crypto: BTC, ETH
+- Backend: (e.g. TypeScript, Python, Go)
+- Data: (e.g. pandas, SQL, Excel)
+- Frontend: (e.g. React, Vue, none)
 
 ## Output Preferences
 - Save reports to /workspace/reports/
-- Code: PEP8 + type hints for Python, no unnecessary abstractions
 - Format: Markdown tables for data, bullet points for lists
 - Never explain what you are about to do — execute and report results
+
+---
+*Edit this file from Settings → User Profile to help the agent understand your context.*
