@@ -8,7 +8,7 @@
 #   ./setup.sh --reset       Wipe data and start fresh
 #
 # One-liner install:
-#   curl -fsSL https://raw.githubusercontent.com/AmitkrPaiwal/AI-Partner/main/setup.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/AmitkrPaliwal/AI-Partner/main/setup.sh | bash
 # ═══════════════════════════════════════════════════════════════════
 set -e
 
@@ -136,7 +136,7 @@ if [ ! -f docker-compose.yml ]; then
         log_err "git is required. Install git and re-run."
         exit 1
     fi
-    REPO_URL="https://github.com/AmitkrPaiwal/AI-Partner.git"
+    REPO_URL="https://github.com/AmitkrPaliwal/AI-Partner.git"
     DEST="$HOME/AI-Partner"
     if [ -d "$DEST/.git" ]; then
         log_info "Existing clone found at $DEST — pulling latest..."
@@ -429,7 +429,7 @@ echo "  ║   Stop:    docker compose down                          ║"
 echo "  ║   Update:  ./setup.sh --update                          ║"
 echo "  ║   Reset:   ./setup.sh --reset                           ║"
 echo "  ║                                                          ║"
-echo "  ║   Docs:    https://github.com/AmitkrPaiwal/AI-Partner  ║"
+echo "  ║   Docs:    https://github.com/AmitkrPaliwal/AI-Partner  ║"
 echo "  ║                                                          ║"
 echo "  ╚══════════════════════════════════════════════════════════╝"
 printf "${RESET}\n"

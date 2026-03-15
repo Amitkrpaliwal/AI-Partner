@@ -7,7 +7,7 @@
 #   .\install.ps1 -Reset        Wipe data and start fresh
 #
 # One-liner install (paste into PowerShell):
-#   iwr -useb https://raw.githubusercontent.com/AmitkrPaiwal/AI-Partner/main/install.ps1 | iex
+#   iwr -useb https://raw.githubusercontent.com/AmitkrPaliwal/AI-Partner/main/install.ps1 | iex
 # ═══════════════════════════════════════════════════════════════════
 
 param(
@@ -109,7 +109,7 @@ if (-not (Test-Path "docker-compose.yml")) {
         Write-Err "git is required. Install Git for Windows (https://git-scm.com) and re-run."
         exit 1
     }
-    $repoUrl = "https://github.com/AmitkrPaiwal/AI-Partner.git"
+    $repoUrl = "https://github.com/AmitkrPaliwal/AI-Partner.git"
     $dest = Join-Path $HOME "AI-Partner"
     if (Test-Path (Join-Path $dest ".git")) {
         Write-Info "Existing clone found at $dest — pulling latest..."
@@ -332,7 +332,7 @@ Write-Host "  ║   Stop:    docker compose down                              �
 Write-Host "  ║   Update:  .\install.ps1 -Update                            ║" -ForegroundColor Green
 Write-Host "  ║   Reset:   .\install.ps1 -Reset                             ║" -ForegroundColor Green
 Write-Host "  ║                                                              ║" -ForegroundColor Green
-Write-Host "  ║   Docs:    https://github.com/AmitkrPaiwal/AI-Partner      ║" -ForegroundColor Green
+Write-Host "  ║   Docs:    https://github.com/AmitkrPaliwal/AI-Partner      ║" -ForegroundColor Green
 Write-Host "  ║                                                              ║" -ForegroundColor Green
 Write-Host "  ╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""

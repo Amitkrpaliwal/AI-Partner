@@ -7,7 +7,7 @@
 Give it a goal. It researches, codes, generates documents, and delivers results to your Telegram or Discord — without you babysitting it.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/AmitkrPaiwal/AI-Partner?style=social)](https://github.com/AmitkrPaiwal/AI-Partner)
+[![GitHub Stars](https://img.shields.io/github/stars/AmitkrPaliwal/AI-Partner?style=social)](https://github.com/AmitkrPaliwal/AI-Partner)
 [![Docker](https://img.shields.io/badge/Docker-Compose-blue)](docker-compose.yml)
 [![Tests](https://img.shields.io/badge/tests-145%20passing-brightgreen)](server/src/tests)
 
@@ -21,17 +21,17 @@ Give it a goal. It researches, codes, generates documents, and delivers results 
 
 **Mac / Linux — one command:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/AmitkrPaiwal/AI-Partner/main/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/AmitkrPaliwal/AI-Partner/main/setup.sh | bash
 ```
 
 **Windows — paste into PowerShell:**
 ```powershell
-iwr -useb https://raw.githubusercontent.com/AmitkrPaiwal/AI-Partner/main/install.ps1 | iex
+iwr -useb https://raw.githubusercontent.com/AmitkrPaliwal/AI-Partner/main/install.ps1 | iex
 ```
 
 **Or clone and run:**
 ```bash
-git clone https://github.com/AmitkrPaiwal/AI-Partner
+git clone https://github.com/AmitkrPaliwal/AI-Partner
 cd AI-Partner
 ./setup.sh
 ```
