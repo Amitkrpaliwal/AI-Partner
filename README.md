@@ -4,7 +4,15 @@
 
 <p><strong>Autonomous multi-agent orchestration platform that executes complex goals end-to-end — without hand-holding.</strong></p>
 
+<p><em>Most AI tools work <strong>for</strong> you. AI Partner works <strong>as</strong> you.</em></p>
+
 <p>Give it a goal in plain English. It researches, writes code, generates documents, and delivers results to your Telegram, Discord, or Slack — autonomously.</p>
+
+<p>
+  <a href="https://aipartner.amitpaliwal.com"><strong>🌐 Website</strong></a> ·
+  <img src="https://img.shields.io/badge/v1-live-brightgreen" alt="v1 live"/> ·
+  <img src="https://img.shields.io/badge/v2-coming%20soon-orange" alt="v2 coming soon"/>
+</p>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/AmitkrPaiwal/AI-Partner?style=social)](https://github.com/AmitkrPaiwal/AI-Partner/stargazers)
@@ -227,12 +235,14 @@ The open-source self-hosted agent space has several strong projects, each built 
 | Project | Primary Design Focus | Best Suited For |
 |---------|---------------------|-----------------|
 | **AI Partner** | End-to-end goal execution with validated outcomes, specialist agents, document generation, and messaging delivery | Users who want to hand off a complete goal and receive a finished, delivered result — with no babysitting |
+| **Hermes Agent** | Autonomous agent with 68 built-in tools, 15+ chat platforms, NL scheduling, and RL training via Atropos | Users who want wide messaging platform coverage and self-improving skills out of the box |
+| **OpenHuman** | Desktop-native personal agent with 118+ OAuth integrations, auto-sync every 20 min, Memory Tree + Obsidian vault | Users who want zero server ops and automatic context from all their connected accounts |
+| **OpenClaw** | Personal, always-on AI assistant with 22+ messaging platforms and a modular skills registry (ClawHub) | Users who want the widest messaging reach — LINE, WeChat, QQ, iMessage, Matrix, and more |
 | **Agent Zero** | OS-level autonomy with dynamic tool creation at runtime; runs in an isolated Docker terminal | Power users who want an agent that can build its own tools and interact deeply with the operating system |
-| **OpenClaw** | Personal, always-on AI assistant with a modular skills system; strong messaging integrations | Users who want a self-hosted personal assistant accessible via Telegram, WhatsApp, or iMessage |
 | **OpenHands** | Enterprise-grade autonomous software engineering; multi-agent collaboration and audit trails | Engineering teams automating code review, bug fixing, or large-scale software development workflows |
-| **OpenManus** | Open alternative to Manus; flexible task decomposition and planning with reinforcement learning | Researchers and developers experimenting with agent reasoning and RL-based decision-making |
+| **CrewAI** | Multi-agent crew pipelines with defined roles, tasks, and handoffs; best-documented orchestration framework | Teams building structured multi-agent workflows with clear role boundaries |
 
-> **Where AI Partner fits:** It is the only project in this space that treats goal *delivery* — not just task execution — as a first-class requirement. The agent must prove outcomes via typed success criteria, validates messaging delivery, and self-corrects on failure. The one-command Docker install also makes it the most accessible entry point for non-developer users.
+> **Where AI Partner fits:** It is the only project in this space that treats goal *delivery* — not just task execution — as a first-class requirement. The agent proves outcomes via typed success criteria, validates messaging delivery, and self-corrects on failure. v2 adds human proxy capabilities — acting as you across email, meetings, and phone — which no other self-hosted tool in this table does.
 
 ---
 
@@ -290,6 +300,27 @@ cd server && npm run test:unit
 # TypeScript check
 cd server && npx tsc --noEmit
 ```
+
+---
+
+## 🚀 What's Coming in v2
+
+v2 shifts the platform from **working for you** to **working as you** — acting on your behalf across email, meetings, phone, and messaging with your identity and your voice, gated by a policy you control.
+
+| Capability | Status |
+|---|---|
+| **Human proxy** — reply to email, Slack DMs, Telegram DMs in your voice (not a bot) | 🔨 Building |
+| **Meeting proxy** — join Teams / Zoom / Meet as a participant, speak via voice clone | 🔨 Building |
+| **Phone proxy** — voicemail intake, outbound calls via Twilio | 🔨 Building |
+| **AuthorityPolicy** — declarative auto / draft-and-ask / block per action + contact class | 🔨 Building |
+| **CounterpartyStore** — unified identity graph across email, Slack, Telegram, and meetings | 🔨 Building |
+| **Proactive heartbeat** — LLM decides when to act autonomously, no prompt needed | 🔨 Building |
+| **Voice clone** — speaks in your voice via ElevenLabs / MiniMax / OpenAI | 🔨 Building |
+| **41 MCP servers** (up from 17) — Stripe, HubSpot, S3, Sentry, Microsoft 365 added | 🔨 Building |
+| **18+ LLM providers** (up from 9) — OpenRouter, Cerebras, NVIDIA NIM, MiniMax added | 🔨 Building |
+| **5-layer memory** — adds biographic facts + counterparty graph to the existing stack | 🔨 Building |
+
+**[⭐ Star this repo](https://github.com/AmitkrPaiwal/AI-Partner/stargazers)** to be notified when v2 ships. Follow progress at [aipartner.amitpaliwal.com](https://aipartner.amitpaliwal.com).
 
 ---
 
