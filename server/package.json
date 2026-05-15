@@ -20,6 +20,7 @@
         "@modelcontextprotocol/sdk": "^0.6.0",
         "@modelcontextprotocol/server-filesystem": "^0.6.0",
         "@slack/bolt": "^4.6.0",
+        "@tavily/core": "^0.6.4",
         "@whiskeysockets/baileys": "^7.0.0-rc.9",
         "adm-zip": "^0.5.16",
         "axios": "^1.13.3",
