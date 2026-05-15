@@ -50,9 +50,10 @@ export interface AppConfig {
         require_docker: boolean;
     };
     search: {
-        preferred_provider: 'searxng' | 'brave' | 'duckduckgo' | 'auto';
+        preferred_provider: 'searxng' | 'brave' | 'duckduckgo' | 'tavily' | 'auto';
         searxng_endpoint: string;
         brave_api_key: string;
+        tavily_api_key: string;
     };
     container: {
         enabled: boolean;
@@ -230,6 +231,7 @@ export class ConfigManager {
                     ? `${process.env.SEARXNG_ENDPOINT}/search`
                     : 'http://localhost:8888/search',
                 brave_api_key: '',
+                tavily_api_key: '',
             },
             container: {
                 enabled: true,

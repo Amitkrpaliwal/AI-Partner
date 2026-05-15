@@ -201,9 +201,13 @@ async function initializeApp() {
   if (searchCfg.brave_api_key) {
     searchProviderManager.configureProvider('brave', { apiKey: searchCfg.brave_api_key, enabled: true });
   }
+  if (searchCfg.tavily_api_key || process.env.TAVILY_API_KEY) {
+    const tavilyKey = (searchCfg.tavily_api_key || process.env.TAVILY_API_KEY) as string;
+    searchProviderManager.configureProvider('tavily', { apiKey: tavilyKey, enabled: true });
+  }
   if (searchCfg.preferred_provider && searchCfg.preferred_provider !== 'auto') {
     const p = searchCfg.preferred_provider as string;
-    const bump: Record<string, number> = { searxng: 10, serpapi: 10, brave: 10, duckduckgo: 10 };
+    const bump: Record<string, number> = { searxng: 10, serpapi: 10, brave: 10, tavily: 10, duckduckgo: 10 };
     bump[p] = 1;
     for (const [name, pri] of Object.entries(bump)) searchProviderManager.configureProvider(name, { priority: pri });
     appLogger.info({ preferred: p }, 'Search provider preference restored');

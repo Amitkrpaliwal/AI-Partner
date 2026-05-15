@@ -37,14 +37,15 @@ searchRoutes.get('/providers', async (_req: Request, res: Response) => {
  * Configure search providers.
  *
  * Body: {
- *   preferred_provider?: 'searxng' | 'brave' | 'duckduckgo' | 'auto',
+ *   preferred_provider?: 'searxng' | 'brave' | 'duckduckgo' | 'tavily' | 'auto',
  *   searxng_endpoint?: string,
- *   brave_api_key?: string
+ *   brave_api_key?: string,
+ *   tavily_api_key?: string
  * }
  */
 searchRoutes.post('/providers/config', async (req: Request, res: Response) => {
     try {
-        const { preferred_provider, searxng_endpoint, brave_api_key } = req.body;
+        const { preferred_provider, searxng_endpoint, brave_api_key, tavily_api_key } = req.body;
 
         const currentConfig = configManager.getConfig();
         const searchConfig = {
@@ -52,6 +53,7 @@ searchRoutes.post('/providers/config', async (req: Request, res: Response) => {
             ...(preferred_provider !== undefined && { preferred_provider }),
             ...(searxng_endpoint !== undefined && { searxng_endpoint }),
             ...(brave_api_key !== undefined && { brave_api_key }),
+            ...(tavily_api_key !== undefined && { tavily_api_key }),
         };
 
         await configManager.updateConfig({ search: searchConfig } as any);
@@ -65,9 +67,13 @@ searchRoutes.post('/providers/config', async (req: Request, res: Response) => {
             searchProviderManager.configureProvider('brave', { apiKey: brave_api_key, enabled: true });
         }
 
+        if (tavily_api_key) {
+            searchProviderManager.configureProvider('tavily', { apiKey: tavily_api_key, enabled: true });
+        }
+
         // Apply preferred_provider by setting its priority to 1 and bumping others
         if (preferred_provider && preferred_provider !== 'auto') {
-            const priorityMap: Record<string, number> = { searxng: 10, serpapi: 10, brave: 10, duckduckgo: 10 };
+            const priorityMap: Record<string, number> = { searxng: 10, serpapi: 10, brave: 10, tavily: 10, duckduckgo: 10 };
             priorityMap[preferred_provider] = 1; // Promote chosen provider to top
             for (const [name, priority] of Object.entries(priorityMap)) {
                 searchProviderManager.configureProvider(name, { priority });
@@ -77,6 +83,7 @@ searchRoutes.post('/providers/config', async (req: Request, res: Response) => {
             searchProviderManager.configureProvider('searxng',   { priority: 1 });
             searchProviderManager.configureProvider('serpapi',   { priority: 5 });
             searchProviderManager.configureProvider('brave',     { priority: 10 });
+            searchProviderManager.configureProvider('tavily',    { priority: 3 });
             searchProviderManager.configureProvider('duckduckgo', { priority: 100 });
         }
 
