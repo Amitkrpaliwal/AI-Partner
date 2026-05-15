@@ -3,4 +3,5 @@ export { SearXNGProvider } from './SearXNGProvider';
 export { SerpAPIProvider } from './SerpAPIProvider';
 export { BraveSearchProvider } from './BraveSearchProvider';
 export { DuckDuckGoProvider } from './DuckDuckGoProvider';
+export { TavilyProvider } from './TavilyProvider';
 export { SearchProviderManager, searchProviderManager } from './SearchProviderManager';

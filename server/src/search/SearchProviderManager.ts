@@ -3,9 +3,10 @@
  *
  * Fallback chain (by priority):
  *   1. SearXNG (self-hosted, private, no rate limits)
- *   2. SerpAPI (Google results via API key)
- *   3. Brave Search (API key, reliable)
- *   4. DuckDuckGo (free, no key, but unreliable)
+ *   2. Tavily (LLM-optimized search, API key)
+ *   3. SerpAPI (Google results via API key)
+ *   4. Brave Search (API key, reliable)
+ *   5. DuckDuckGo (free, no key, but unreliable)
  *
  * If the primary provider fails, it automatically falls through to the next.
  *
@@ -20,6 +21,7 @@ import { SearXNGProvider } from './SearXNGProvider';
 import { BraveSearchProvider } from './BraveSearchProvider';
 import { DuckDuckGoProvider } from './DuckDuckGoProvider';
 import { SerpAPIProvider } from './SerpAPIProvider';
+import { TavilyProvider } from './TavilyProvider';
 
 interface ProviderHealth {
     consecutiveFailures: number;
@@ -50,6 +52,7 @@ export class SearchProviderManager extends EventEmitter {
         // Register default providers in priority order
         this.providers = [
             new SearXNGProvider(),
+            new TavilyProvider(),
             new SerpAPIProvider(),
             new BraveSearchProvider(),
             new DuckDuckGoProvider(),
