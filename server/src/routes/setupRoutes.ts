@@ -211,6 +211,7 @@ router.post('/complete', async (req: Request, res: Response) => {
             github: 'GITHUB_TOKEN',
             notion: 'NOTION_API_KEY',
             brave: 'BRAVE_API_KEY',
+            tavily: 'TAVILY_API_KEY',
             serpapi: 'SERPAPI_API_KEY',
         };
         for (const [service, val] of Object.entries(integrations)) {

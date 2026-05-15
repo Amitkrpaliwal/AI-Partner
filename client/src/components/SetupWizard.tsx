@@ -42,6 +42,7 @@ const INTEGRATIONS = [
     { id: 'github', label: 'GitHub', description: 'Create PRs, issues, and manage repos.', keyLabel: 'Personal Access Token', keyHint: 'ghp_...' },
     { id: 'notion', label: 'Notion', description: 'Create pages, update databases, search notes.', keyLabel: 'API Key', keyHint: 'secret_...' },
     { id: 'brave', label: 'Brave Search', description: 'High-quality web search API.', keyLabel: 'API Key', keyHint: 'BSA...' },
+    { id: 'tavily', label: 'Tavily Search', description: 'AI-optimised web search API (optional).', keyLabel: 'API Key', keyHint: 'tvly-...' },
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────

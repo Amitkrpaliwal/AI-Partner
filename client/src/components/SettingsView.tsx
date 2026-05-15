@@ -51,6 +51,7 @@ export function SettingsView() {
     const [preferredSearch, setPreferredSearch] = useState('auto');
     const [searxngEndpoint, setSearxngEndpoint] = useState('http://localhost:8888/search');
     const [braveApiKey, setBraveApiKey] = useState('');
+    const [tavilyApiKey, setTavilyApiKey] = useState('');
     const [savingSearch, setSavingSearch] = useState(false);
     const [searchTestResult, setSearchTestResult] = useState<string | null>(null);
 
@@ -291,6 +292,7 @@ export function SettingsView() {
                     preferred_provider: preferredSearch,
                     searxng_endpoint: searxngEndpoint,
                     brave_api_key: braveApiKey || undefined,
+                    tavily_api_key: tavilyApiKey || undefined,
                 }),
             });
             await fetchSearchProviders();
@@ -673,6 +675,7 @@ export function SettingsView() {
                                 <option value="searxng">SearXNG (self-hosted)</option>
                                 <option value="brave">Brave Search</option>
                                 <option value="duckduckgo">DuckDuckGo</option>
+                                <option value="tavily">Tavily</option>
                             </select>
                         </div>
                         <div>
@@ -694,6 +697,18 @@ export function SettingsView() {
                                 value={braveApiKey}
                                 onChange={e => setBraveApiKey(e.target.value)}
                             />
+                        </div>
+                        <div>
+                            <label className="text-sm font-medium block mb-1">Tavily API Key</label>
+                            <Input
+                                type="password"
+                                placeholder="Enter Tavily API key (optional)"
+                                value={tavilyApiKey}
+                                onChange={e => setTavilyApiKey(e.target.value)}
+                            />
+                            <p className="text-[10px] text-muted-foreground mt-1">
+                                Get a key at <a href="https://app.tavily.com" target="_blank" rel="noreferrer" className="text-primary underline">app.tavily.com</a>
+                            </p>
                         </div>
                     </div>
 
