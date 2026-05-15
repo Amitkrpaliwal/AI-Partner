@@ -83,7 +83,7 @@ searchRoutes.post('/providers/config', async (req: Request, res: Response) => {
             searchProviderManager.configureProvider('searxng',   { priority: 1 });
             searchProviderManager.configureProvider('serpapi',   { priority: 5 });
             searchProviderManager.configureProvider('brave',     { priority: 10 });
-            searchProviderManager.configureProvider('tavily',    { priority: 15 });
+            searchProviderManager.configureProvider('tavily',    { priority: 3 });
             searchProviderManager.configureProvider('duckduckgo', { priority: 100 });
         }
 

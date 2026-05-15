@@ -202,7 +202,7 @@ async function initializeApp() {
     searchProviderManager.configureProvider('brave', { apiKey: searchCfg.brave_api_key, enabled: true });
   }
   if (searchCfg.tavily_api_key || process.env.TAVILY_API_KEY) {
-    const tavilyKey = searchCfg.tavily_api_key || process.env.TAVILY_API_KEY;
+    const tavilyKey = (searchCfg.tavily_api_key || process.env.TAVILY_API_KEY) as string;
     searchProviderManager.configureProvider('tavily', { apiKey: tavilyKey, enabled: true });
   }
   if (searchCfg.preferred_provider && searchCfg.preferred_provider !== 'auto') {
