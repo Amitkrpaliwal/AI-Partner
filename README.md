@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/amitkrpaliwal-ai-partner-badge.png)](https://mseep.ai/app/amitkrpaliwal-ai-partner)
+
 <div align="center">
 
 <h1>🤖 AI Partner</h1>
