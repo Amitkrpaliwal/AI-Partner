@@ -195,6 +195,7 @@ async function initializeApp() {
   const { searchProviderManager } = await import('./search');
   await searchProviderManager.initialize();
   const searchCfg = (config as any).search || {};
+  searchProviderManager.setParallelPreference(searchCfg.preferred_provider || 'auto');
   if (searchCfg.searxng_endpoint) {
     searchProviderManager.configureProvider('searxng', { endpoint: searchCfg.searxng_endpoint });
   }

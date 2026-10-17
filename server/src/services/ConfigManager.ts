@@ -50,7 +50,7 @@ export interface AppConfig {
         require_docker: boolean;
     };
     search: {
-        preferred_provider: 'searxng' | 'brave' | 'duckduckgo' | 'auto';
+        preferred_provider: 'searxng' | 'brave' | 'duckduckgo' | 'parallel' | 'auto';
         searxng_endpoint: string;
         brave_api_key: string;
     };

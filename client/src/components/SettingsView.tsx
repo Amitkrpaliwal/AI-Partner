@@ -640,7 +640,7 @@ export function SettingsView() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <p className="text-xs text-muted-foreground">
-                        Configure web search providers. SearXNG (self-hosted) is preferred, with Brave and DuckDuckGo as fallbacks.
+                        Configure web search providers. Auto prefers SearXNG, with Brave and DuckDuckGo as fallbacks. Select Parallel for free search without an account, API key, or local search service.
                     </p>
 
                     {/* Provider Status */}
@@ -673,6 +673,7 @@ export function SettingsView() {
                                 <option value="searxng">SearXNG (self-hosted)</option>
                                 <option value="brave">Brave Search</option>
                                 <option value="duckduckgo">DuckDuckGo</option>
+                                <option value="parallel">Parallel (free, no API key)</option>
                             </select>
                         </div>
                         <div>

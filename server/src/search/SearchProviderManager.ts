@@ -15,7 +15,8 @@
  */
 
 import { EventEmitter } from 'events';
-import { SearchProvider, SearchProviderConfig, SearchResponse } from './SearchProvider';
+import { ParallelSearchProvider } from './ParallelSearchProvider';
+import { SearchProvider, SearchProviderConfig, SearchResponse, SearchOptions } from './SearchProvider';
 import { SearXNGProvider } from './SearXNGProvider';
 import { BraveSearchProvider } from './BraveSearchProvider';
 import { DuckDuckGoProvider } from './DuckDuckGoProvider';
@@ -53,6 +54,7 @@ export class SearchProviderManager extends EventEmitter {
             new SerpAPIProvider(),
             new BraveSearchProvider(),
             new DuckDuckGoProvider(),
+            new ParallelSearchProvider(), // Opt-in only; excluded from automatic fallback
         ];
 
         // Initialize health tracking for each provider
@@ -92,6 +94,11 @@ export class SearchProviderManager extends EventEmitter {
             });
             console.log(`[SearchProviderManager] Configured ${name}:`, { enabled: config.enabled, hasKey: !!config.apiKey });
         }
+    }
+
+    /** Apply only the new provider's opt-in state; leave incumbent priorities alone. */
+    setParallelPreference(preferred: string): void {
+        this.configureProvider('parallel', { enabled: preferred === 'parallel' });
     }
 
     /**
@@ -150,8 +157,15 @@ export class SearchProviderManager extends EventEmitter {
      * Tries each enabled provider in priority order until one succeeds.
      * Skips unhealthy providers (unless cooldown elapsed).
      */
-    async search(query: string, limit: number = 5): Promise<SearchResponse> {
+    async search(query: string, limit: number = 5, options: SearchOptions = {}): Promise<SearchResponse> {
         await this.initialize();
+
+        // An explicitly selected Parallel provider owns this request. Surface errors
+        // directly instead of sending the same query to an unselected service.
+        const parallel = this.getProvider('parallel');
+        if (parallel && await parallel.isAvailable()) {
+            return parallel.search(query, limit, options);
+        }
 
         const errors: string[] = [];
 

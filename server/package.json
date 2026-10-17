@@ -17,7 +17,7 @@
         "@ai-coworker/shared": "1.0.0",
         "@anthropic-ai/sdk": "^0.74.0",
         "@google/generative-ai": "^0.24.1",
-        "@modelcontextprotocol/sdk": "^0.6.0",
+        "@modelcontextprotocol/sdk": "^1.32.1",
         "@modelcontextprotocol/server-filesystem": "^0.6.0",
         "@slack/bolt": "^4.6.0",
         "@whiskeysockets/baileys": "^7.0.0-rc.9",

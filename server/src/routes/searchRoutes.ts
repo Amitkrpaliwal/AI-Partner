@@ -37,7 +37,7 @@ searchRoutes.get('/providers', async (_req: Request, res: Response) => {
  * Configure search providers.
  *
  * Body: {
- *   preferred_provider?: 'searxng' | 'brave' | 'duckduckgo' | 'auto',
+ *   preferred_provider?: 'searxng' | 'brave' | 'duckduckgo' | 'parallel' | 'auto',
  *   searxng_endpoint?: string,
  *   brave_api_key?: string
  * }
@@ -46,6 +46,11 @@ searchRoutes.post('/providers/config', async (req: Request, res: Response) => {
     try {
         const { preferred_provider, searxng_endpoint, brave_api_key } = req.body;
 
+        await searchProviderManager.initialize();
+        if (preferred_provider !== undefined &&
+            !['auto', ...searchProviderManager.listProviders()].includes(preferred_provider)) {
+            return res.status(400).json({ success: false, error: 'Unknown search provider' });
+        }
         const currentConfig = configManager.getConfig();
         const searchConfig = {
             ...currentConfig.search,
@@ -55,6 +60,10 @@ searchRoutes.post('/providers/config', async (req: Request, res: Response) => {
         };
 
         await configManager.updateConfig({ search: searchConfig } as any);
+
+        if (preferred_provider !== undefined) {
+            searchProviderManager.setParallelPreference(preferred_provider);
+        }
 
         // Apply config to providers
         if (searxng_endpoint) {
