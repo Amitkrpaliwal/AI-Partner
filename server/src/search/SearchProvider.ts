@@ -5,6 +5,10 @@
  * Used by: SearchProviderManager (multi-provider fallback chain)
  */
 
+export interface SearchOptions {
+    signal?: AbortSignal;
+}
+
 export interface SearchResult {
     title: string;
     snippet: string;
@@ -56,7 +60,7 @@ export interface SearchProvider {
      * @param limit - Max results to return
      * @returns SearchResponse with results or error
      */
-    search(query: string, limit?: number): Promise<SearchResponse>;
+    search(query: string, limit?: number, options?: SearchOptions): Promise<SearchResponse>;
 
     /**
      * Configure the provider at runtime.

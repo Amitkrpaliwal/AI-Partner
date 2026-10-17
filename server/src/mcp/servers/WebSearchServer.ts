@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import axios from 'axios';
 import { isUrlSafe, logSecurityEvent } from '../../utils/security';
-import { searchProviderManager } from '../../search';
+import { searchProviderManager, SearchOptions } from '../../search';
 
 /**
  * Web Search MCP Tool Server
@@ -76,10 +76,10 @@ export class WebSearchServer extends EventEmitter {
         ];
     }
 
-    async callTool(toolName: string, args: any): Promise<any> {
+    async callTool(toolName: string, args: any, options: SearchOptions = {}): Promise<any> {
         switch (toolName) {
             case 'web_search':
-                return this.webSearch(args.query, args.limit);
+                return this.webSearch(args.query, args.limit, options);
             case 'web_fetch':
                 return this.webFetch(args.url, args.maxLength, args.offset);
             case 'web_search_status':
@@ -93,9 +93,9 @@ export class WebSearchServer extends EventEmitter {
      * Search using multi-provider fallback chain.
      * Fix 3: default limit raised from 5 → 10.
      */
-    private async webSearch(query: string, limit: number = 10): Promise<any> {
+    private async webSearch(query: string, limit: number = 10, options: SearchOptions = {}): Promise<any> {
         try {
-            const result = await searchProviderManager.search(query, Math.min(limit, 20));
+            const result = await searchProviderManager.search(query, Math.min(limit, 20), options);
             return result;
         } catch (error: any) {
             console.error('[WebSearch] Search failed:', error.message);

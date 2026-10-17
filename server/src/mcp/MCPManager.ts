@@ -686,7 +686,7 @@ export class MCPManager {
         return allTools;
     }
 
-    async callTool(serverName: string, toolName: string, args: any) {
+    async callTool(serverName: string, toolName: string, args: any, options: { signal?: AbortSignal } = {}) {
         // Validate tool arguments with Zod before dispatch
         let validatedArgs: any;
         try {
@@ -735,7 +735,7 @@ export class MCPManager {
 
             // Handle web search server calls
             if (serverName === 'websearch') {
-                return logResult(await webSearchServer.callTool(toolName, validatedArgs));
+                return logResult(await webSearchServer.callTool(toolName, validatedArgs, options));
             }
 
             // Handle GitHub calls

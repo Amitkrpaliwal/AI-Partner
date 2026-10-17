@@ -303,6 +303,21 @@ cd server && npx tsc --noEmit
 
 ---
 
+### Optional Parallel web search
+
+In **Settings → Web Search**, select **Parallel (free, no API key)** as the
+preferred search provider and save. The built-in `web_search` tool then uses
+[Parallel Search MCP](https://docs.parallel.ai/integrations/mcp/search-mcp) at
+`https://search.parallel.ai/mcp`, with Fast mode for anonymous searches. Results
+include titles, excerpts, and source URLs for the agent's research context.
+
+No Parallel account or API key is needed. Anonymous usage has rate limits; quota,
+network, and timeout errors are returned to the agent without silently switching
+providers. Select **Auto** or another provider to disable Parallel. The selection
+is saved and restored on restart. Existing automatic search priorities and keys
+are unchanged until you select Parallel. Page fetching continues to use the
+existing `web_fetch` implementation.
+
 ## 🚀 What's Coming in v2
 
 v2 shifts the platform from **working for you** to **working as you** — acting on your behalf across email, meetings, phone, and messaging with your identity and your voice, gated by a policy you control.
